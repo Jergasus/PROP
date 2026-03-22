@@ -135,16 +135,24 @@ public class MenuController {
             }
         }
 
+        // Seleccionar estrategia de adyacencia según forma y preferencia del usuario
+        AdjacencyStrategy strategy;
+        if (shape == CellShape.SQUARE && fullAdj) {
+            strategy = new SquareFullAdjacencyStrategy();
+        } else if (shape == CellShape.HEXAGON) {
+            strategy = new HexagonalAdjacencyStrategy();
+        } else if (shape == CellShape.TRIANGLE) {
+            strategy = new TriangleAdjacencyStrategy();
+        } else {
+            strategy = new SquareAdjacencyStrategy();
+        }
+
         // Generar
         view.printMessage("Generando...");
         Generator generator = new Generator();
-        Board board = generator.generatePuzzle(size, size, shape, diff);
+        Board board = generator.generatePuzzle(size, size, shape, strategy, diff);
 
-        // Ajustar estrategia si el usuario pidió full adjacency y es cuadrado/triángulo
         if (board != null) {
-            if (shape == CellShape.SQUARE && fullAdj) {
-                board.setAdjacencyStrategy(new SquareFullAdjacencyStrategy());
-            }
 
             Game game = new Game(board);
             GameController gc = new GameController(game, view);
