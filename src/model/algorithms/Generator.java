@@ -1,12 +1,12 @@
 package model.algorithms;
 
+import model.adjacency.AdjacencyStrategy;
+import model.adjacency.HexagonalAdjacencyStrategy;
+import model.adjacency.SquareAdjacencyStrategy;
+import model.adjacency.TriangleAdjacencyStrategy;
 import model.board.Board;
 import model.cell.Cell;
 import model.cell.CellShape;
-import model.cell.Position;
-import model.adjacency.SquareAdjacencyStrategy;
-import model.adjacency.HexagonalAdjacencyStrategy;
-import model.adjacency.TriangleAdjacencyStrategy;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,41 +15,47 @@ import java.util.Random;
 
 public class Generator {
 
+    private static final int MAX_ATTEMPTS = 20;
     private final Random random = new Random();
 
+    // -----------------------------------------------------------------------
+    // Public API
+    // -----------------------------------------------------------------------
+
     /**
-     * Genera un puzzle de Hidato con solución única.
-     * @param difficulty Porcentaje de celdas a intentar vaciar (0.0 a 1.0).
+     * Generates a Hidato puzzle with a unique solution.
+     *
+     * @param rows       number of rows
+     * @param cols       number of columns
+     * @param shape      cell geometry
+     * @param strategy   adjacency strategy to use for generation AND play
+     * @param difficulty fraction of removable cells to actually remove [0.0, 1.0]
+     * @return a valid puzzle board, or null if generation failed
      */
-    public Board generatePuzzle(int rows, int cols, CellShape shape, double difficulty) {
-        // 1. Generar tablero completo válido
-        Board board = generateFullBoard(rows, cols, shape);
+    public Board generatePuzzle(int rows, int cols, CellShape shape,
+                                AdjacencyStrategy strategy, double difficulty) {
+        Board board = generateFullBoard(rows, cols, shape, strategy);
         if (board == null) return null;
 
-        // 2. Preparar lista de celdas candidatas a vaciar
+        int maxVal = board.getCellCount(); // number of playable cells
+
+        // Mark all non-void cells as fixed, collect candidates to remove
+        // (never remove 1 or the maximum value — keeps the puzzle anchored)
         List<Cell> candidates = new ArrayList<>();
-        int maxVal = board.getRows() * board.getCols(); // Aproximado
-        
-        // Marcar inicialmente todas las celdas NO vacías como fijas
-        // para que al quitar una, el resto sigan siendo restricciones.
         for (int i = 0; i < board.getRows(); i++) {
             for (int j = 0; j < board.getCols(); j++) {
                 Cell c = board.getCell(i, j);
                 if (!c.isVoid()) {
                     c.setFixedValue(c.getValue());
-                    // Excluir start (1) y end (max) de ser eliminados
-                    // (Aunque en Hidato hard a veces no estan, aquí simplificamos)
                     if (c.getValue() != 1 && c.getValue() != maxVal) {
                         candidates.add(c);
                     }
                 }
             }
         }
-        
-        // 3. Mezclar candidatos
+
         Collections.shuffle(candidates, random);
 
-        // 4. Intentar vaciar celdas una a una
         Solver solver = new Solver();
         int targetToRemove = (int) (candidates.size() * difficulty);
         int removedCount = 0;
@@ -58,20 +64,13 @@ public class Generator {
             if (removedCount >= targetToRemove) break;
 
             int originalValue = c.getValue();
-            
-            // Tentativamente vaciar (desfijar y poner a 0)
-            c.setAsEmpty(); 
+            c.setAsEmpty();
 
-            // Verificar si sigue teniendo solución única
-            // IMPORTANTE: countSolutions(limit=2) devuelve 0, 1 o 2.
-            int solutions = solver.countSolutions(board, 2);
-            
-            if (solutions != 1) {
-                // Si se rompe a 0 o >1 soluciones, deshacemos
-                c.setFixedValue(originalValue);
-            } else {
-                // Éxito, se queda vacía
+            // Keep removal only if solution remains unique
+            if (solver.countSolutions(board, 2) == 1) {
                 removedCount++;
+            } else {
+                c.setFixedValue(originalValue);
             }
         }
 
@@ -79,32 +78,53 @@ public class Generator {
     }
 
     /**
-     * Genera un tablero de Hidato válido y completo (sin huecos vacíos).
+     * Convenience overload that picks a default strategy based on cell shape.
+     * Prefer the overload that accepts an explicit strategy when possible.
+     */
+    public Board generatePuzzle(int rows, int cols, CellShape shape, double difficulty) {
+        return generatePuzzle(rows, cols, shape, defaultStrategy(shape), difficulty);
+    }
+
+    /**
+     * Generates a completely filled, valid Hidato board using the given strategy.
+     *
+     * @return a fully solved board, or null if all attempts failed
+     */
+    public Board generateFullBoard(int rows, int cols, CellShape shape, AdjacencyStrategy strategy) {
+        Solver solver = new Solver();
+
+        for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+            Board board = new Board(rows, cols, shape, strategy);
+
+            // Pick a random starting cell for value 1
+            int startR = random.nextInt(rows);
+            int startC = random.nextInt(cols);
+            board.getCell(startR, startC).setValue(1);
+
+            if (solver.solve(board)) {
+                return board;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Convenience overload that picks a default strategy based on cell shape.
      */
     public Board generateFullBoard(int rows, int cols, CellShape shape) {
-        // 1. Crear tablero vacío con la estrategia adecuada
-        // NOTA: Para SquareFullAdjacencyStrategy, necesitaríamos un parámetro extra.
-        // Asumimos estrategias base por forma.
-        Board board;
-        if (shape == CellShape.HEXAGON) {
-            board = new Board(rows, cols, shape, new HexagonalAdjacencyStrategy());
-        } else if (shape == CellShape.TRIANGLE) {
-            board = new Board(rows, cols, shape, new TriangleAdjacencyStrategy());
-        } else {
-            board = new Board(rows, cols, shape, new SquareAdjacencyStrategy());
-        }
+        return generateFullBoard(rows, cols, shape, defaultStrategy(shape));
+    }
 
-        // 2. Elegir posición inicial aleatoria
-        int startR = random.nextInt(rows);
-        int startC = random.nextInt(cols);
-        Cell startCell = board.getCell(startR, startC);
-        startCell.setValue(1); 
-        // 3. Usar el Solver
-        Solver solver = new Solver();
-        if (solver.solve(board)) {
-            return board;
-        } else {
-            return null; 
-        }
+    // -----------------------------------------------------------------------
+    // Helpers
+    // -----------------------------------------------------------------------
+
+    /** Returns the canonical adjacency strategy for a given cell shape. */
+    private AdjacencyStrategy defaultStrategy(CellShape shape) {
+        return switch (shape) {
+            case HEXAGON  -> new HexagonalAdjacencyStrategy();
+            case TRIANGLE -> new TriangleAdjacencyStrategy();
+            default       -> new SquareAdjacencyStrategy();
+        };
     }
 }

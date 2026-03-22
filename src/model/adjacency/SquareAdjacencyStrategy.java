@@ -17,6 +17,15 @@ public class SquareAdjacencyStrategy implements AdjacencyStrategy {
         {0, 1}   // Derecha
     };
 
+    /**
+     * O(1): two positions are orthogonally adjacent iff their Manhattan
+     * distance is exactly 1.
+     */
+    @Override
+    public boolean areAdjacent(Position p1, Position p2, int rows, int cols) {
+        return Math.abs(p1.row() - p2.row()) + Math.abs(p1.col() - p2.col()) == 1;
+    }
+
     @Override
     public List<Position> getNeighbors(Position pos, int rows, int cols) {
         List<Position> neighbors = new ArrayList<>();
