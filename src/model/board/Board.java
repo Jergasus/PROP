@@ -79,8 +79,26 @@ public class Board implements Serializable {
                pos.col() >= 0 && pos.col() < cols;
     }
 
+    /**
+     * Returns true if p1 and p2 are adjacent according to the current strategy.
+     * Delegates to AdjacencyStrategy.areAdjacent() which may be O(1) for simple
+     * geometries (Square, SquareFull) or O(k) for Hex/Triangle via the default.
+     */
+    public boolean areAdjacent(Position p1, Position p2) {
+        return adjacencyStrategy.areAdjacent(p1, p2, rows, cols);
+    }
+
     public int getRows() { return rows; }
     public int getCols() { return cols; }
+
+    /** Returns the number of non-void (playable) cells on the board. */
+    public int getCellCount() {
+        int count = 0;
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                if (grid[i][j] != null && !grid[i][j].isVoid()) count++;
+        return count;
+    }
 
     public CellShape getCellShape() {
         return cellShape;
