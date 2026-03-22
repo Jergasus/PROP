@@ -65,9 +65,8 @@ public class EditorController {
             return;
         }
         
-        // Limpiar estado previo
-        cell.setValue(0);
-        cell.setVoid(false); // Reset to normal empty cell first
+        // Limpiar estado previo (setAsEmpty handles fixed cells correctly)
+        cell.setAsEmpty();
         
         if (val == -1) {
             cell.setVoid(true);
