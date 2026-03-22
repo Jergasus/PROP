@@ -1,0 +1,23 @@
+# Compiled Java output
+out/
+
+# JUnit / build sources list
+sources.txt
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.class
+
+# Runtime / persistence artifacts
+ranking.dat
+
+# Claude internal notes (not part of the project)
+.claude/
+src/instructions/
