@@ -1,10 +1,10 @@
 package model.game;
 
+import model.algorithms.Validator;
 import model.board.Board;
 import model.cell.Cell;
 
 import java.util.Stack;
-import java.util.List;
 import java.io.Serializable;
 
 public class Game implements Serializable {
@@ -51,34 +51,6 @@ public class Game implements Serializable {
         return true;
     }
 
-    private boolean validatePath() {
-        // Buscar el 1
-        Cell current = null;
-        for (int i = 0; i < board.getRows(); i++) {
-            for (int j = 0; j < board.getCols(); j++) {
-                if (board.getCell(i, j).getValue() == 1) {
-                    current = board.getCell(i, j);
-                    break;
-                }
-            }
-        }
-        if (current == null) return false;
-
-        // Seguir el camino hasta maxNumber
-        for (int nextVal = 2; nextVal <= maxNumber; nextVal++) {
-            List<Cell> neighbors = board.getNeighbors(current.getPosition());
-            boolean foundNext = false;
-            for (Cell neighbor : neighbors) {
-                if (neighbor.getValue() == nextVal) {
-                    current = neighbor;
-                    foundNext = true;
-                    break;
-                }
-            }
-            if (!foundNext) return false; // El camino se rompe
-        }
-        return true;
-    }
 
     public boolean redo() {
         if (redoStack.isEmpty()) return false;
@@ -100,26 +72,18 @@ public class Game implements Serializable {
     }
 
     private int calculateMaxNumber() {
-        int count = 0;
-        for (int i = 0; i < board.getRows(); i++) {
-            for (int j = 0; j < board.getCols(); j++) {
-                if (!board.getCell(i, j).isVoid()) {
-                    count++;
-                }
-            }
-        }
-        return count;
+        return board.getCellCount();
     }
 
     public boolean isFinished() {
+        // Quick check: every non-void cell must be filled
         for (int i = 0; i < board.getRows(); i++) {
             for (int j = 0; j < board.getCols(); j++) {
                 Cell c = board.getCell(i, j);
-                if (!c.isVoid() && c.getValue() == 0) {
-                    return false;
-                }
+                if (!c.isVoid() && c.getValue() == 0) return false;
             }
         }
-        return true;
+        // Full check: the filled numbers form a valid consecutive path
+        return new Validator().isValidSolution(board);
     }
 }
