@@ -13,6 +13,7 @@ public class Game implements Serializable {
     private final Stack<Move> undoStack;
     private final Stack<Move> redoStack;
     private long elapsedTimeMillis;
+    private String levelId; // null for random/custom games
 
     public Game(Board board) {
         this.board = board;
@@ -29,6 +30,9 @@ public class Game implements Serializable {
     public long getElapsedTime() {
         return elapsedTimeMillis;
     }
+
+    public String getLevelId() { return levelId; }
+    public void setLevelId(String levelId) { this.levelId = levelId; }
 
     public void makeMove(int row, int col, int value) {
         Cell cell = board.getCell(row, col);

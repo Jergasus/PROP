@@ -1,7 +1,13 @@
 package view;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import model.board.Board;
+import model.level.Level;
+import model.ranking.RankingEntry;
+import model.user.LevelProgress;
+import model.user.User;
 
 public class ConsoleView {
     private final Scanner scanner;
@@ -10,6 +16,26 @@ public class ConsoleView {
         this.scanner = new Scanner(System.in);
     }
 
+    // -----------------------------------------------------------------------
+    // Ranking (point-based)
+    // -----------------------------------------------------------------------
+
+    public void printPointRanking(List<RankingEntry> entries) {
+        System.out.println("\n=== RANKING GLOBAL ===");
+        if (entries.isEmpty()) {
+            System.out.println("No hay puntuaciones registradas.");
+        } else {
+            System.out.println(String.format("  %-4s %-20s %s", "#", "Jugador", "Puntos"));
+            System.out.println("  " + "-".repeat(35));
+            int rank = 1;
+            for (RankingEntry e : entries) {
+                System.out.printf("  %-4d %-20s %d pts%n", rank++, e.getUsername(), e.getTotalPoints());
+            }
+        }
+        System.out.println("======================\n");
+    }
+
+    /** Legacy ranking for backward compat with random games. */
     public void printRanking(java.util.List<model.ranking.Score> scores) {
         System.out.println("\n=== TOP SCORES ===");
         if (scores.isEmpty()) {
@@ -22,6 +48,80 @@ public class ConsoleView {
             }
         }
         System.out.println("==================\n");
+    }
+
+    // -----------------------------------------------------------------------
+    // Timer and board display
+    // -----------------------------------------------------------------------
+
+    public void printBoardWithTime(Board board, long elapsedMillis) {
+        System.out.println(board.toString());
+        System.out.println("Tiempo: " + formatTime(elapsedMillis));
+        System.out.println();
+    }
+
+    public String formatTime(long millis) {
+        long totalSeconds = millis / 1000;
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
+        if (minutes > 0) return minutes + "m " + seconds + "s";
+        return seconds + "s";
+    }
+
+    // -----------------------------------------------------------------------
+    // Stars and scoring display
+    // -----------------------------------------------------------------------
+
+    public void printStars(int stars) {
+        StringBuilder sb = new StringBuilder("Estrellas: ");
+        for (int i = 0; i < 3; i++) sb.append(i < stars ? "* " : "- ");
+        System.out.println(sb.toString().trim());
+    }
+
+    public void printLevelResult(int stars, int pointsGained, long timeMillis) {
+        System.out.println("\n=== RESULTADO ===");
+        System.out.println("Tiempo: " + formatTime(timeMillis));
+        printStars(stars);
+        System.out.println("Puntos ganados: +" + pointsGained);
+        System.out.println("=================\n");
+    }
+
+    // -----------------------------------------------------------------------
+    // Level selection
+    // -----------------------------------------------------------------------
+
+    public void printLevelList(List<Level> levels, Map<String, LevelProgress> progress) {
+        for (int i = 0; i < levels.size(); i++) {
+            Level l = levels.get(i);
+            LevelProgress lp = progress.getOrDefault(l.getLevelId(), new LevelProgress());
+            String starStr = buildStarString(lp.getBestStars());
+            String timeStr = lp.isCompleted() ? "(" + formatTime(lp.getBestTimeMillis()) + ")" : "(sin jugar)";
+            System.out.printf("  %d. %-12s [%s] %s%n", i + 1, l.getDisplayName(), starStr, timeStr);
+        }
+    }
+
+    private String buildStarString(int stars) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 3; i++) sb.append(i < stars ? "*" : "-");
+        return sb.toString();
+    }
+
+    // -----------------------------------------------------------------------
+    // User profile
+    // -----------------------------------------------------------------------
+
+    public void printUserProfile(User user) {
+        System.out.println("Jugador: " + user.getUsername() + " | Puntos totales: " + user.getTotalPoints());
+    }
+
+    // -----------------------------------------------------------------------
+    // Yes/No prompt
+    // -----------------------------------------------------------------------
+
+    public boolean askYesNo(String prompt) {
+        System.out.println(prompt + " [s/N]");
+        String ans = scanner.nextLine().trim();
+        return ans.equalsIgnoreCase("s") || ans.equalsIgnoreCase("si") || ans.equalsIgnoreCase("y");
     }
 
     public String askString(String prompt) {

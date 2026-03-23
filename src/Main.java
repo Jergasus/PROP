@@ -1,8 +1,16 @@
+import controller.AuthController;
 import controller.MenuController;
+import model.user.User;
+import view.ConsoleView;
 
 public class Main {
     public static void main(String[] args) {
-        MenuController menu = new MenuController();
+        ConsoleView view = new ConsoleView();
+
+        AuthController auth = new AuthController(view);
+        User user = auth.authenticate();
+
+        MenuController menu = new MenuController(user, view);
         menu.showMainMenu();
     }
 }
