@@ -5,21 +5,68 @@
 - Java 17+ installed
 - You are on the `delivery1` branch: `git checkout delivery1`
 
-## 1. Compile everything
+---
+
+## macOS / Linux (bash)
+
+### 1. Compile
 
 ```bash
 find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt
 ```
 
-## 2. Run JUnit test suite (40 tests)
+### 2. Run JUnit test suite (40 tests)
 
 ```bash
 java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
 ```
 
-Expected output: `OK (40 tests)`
+### 3. Interactive drivers
 
-### What the tests cover
+```bash
+java -cp out test.drivers.SolverDriver
+java -cp out test.drivers.GeneratorDriver
+```
+
+### 4. Quick one-liner (compile + test)
+
+```bash
+find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt && java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+```
+
+---
+
+## Windows (PowerShell)
+
+### 1. Compile
+
+```powershell
+Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty FullName | Out-File sources.txt -Encoding utf8
+javac -cp "lib/*" -d out "@sources.txt"
+```
+
+### 2. Run JUnit test suite (40 tests)
+
+```powershell
+java -cp "out;lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+```
+
+### 3. Interactive drivers
+
+```powershell
+java -cp "out;lib/*" test.drivers.SolverDriver
+java -cp "out;lib/*" test.drivers.GeneratorDriver
+```
+
+### 4. Quick one-liner (compile + test)
+
+```powershell
+Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty FullName | Out-File sources.txt -Encoding utf8; javac -cp "lib/*" -d out "@sources.txt"; java -cp "out;lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+```
+
+---
+
+## What the tests cover
 
 | Test class | Tests | What it validates |
 |---|---|---|
@@ -27,26 +74,4 @@ Expected output: `OK (40 tests)`
 | `SolverTest` | 14 | Backtracking solver, unique/multiple solutions, all geometries |
 | `GeneratorTest` | 10 | Puzzle generation, unique solutions, difficulty levels |
 
-## 3. Interactive drivers
-
-### Solver Driver
-
-```bash
-java -cp out test.drivers.SolverDriver
-```
-
-Lets you manually input a board and see the solver find a solution step by step.
-
-### Generator Driver
-
-```bash
-java -cp out test.drivers.GeneratorDriver
-```
-
-Lets you configure shape, size, adjacency, and difficulty, then generates a puzzle and verifies it.
-
-## 4. Quick one-liner (compile + test)
-
-```bash
-find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt && java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
-```
+Expected output: `OK (40 tests)`
