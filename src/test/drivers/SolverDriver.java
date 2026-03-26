@@ -97,7 +97,24 @@ public class SolverDriver {
         System.out.println("\nBoard before solving:");
         System.out.print(board);
 
-        // 6. Validate partial state
+        // 6. Check value 1 is placed
+        boolean hasOne = false;
+        outer:
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (board.getCell(i, j).isFixed() && board.getCell(i, j).getValue() == 1) {
+                    hasOne = true;
+                    break outer;
+                }
+            }
+        }
+        if (!hasOne) {
+            System.out.println("\n[ERROR] Value 1 (start of path) was not placed. Add it as a clue and try again.");
+            sc.close();
+            return;
+        }
+
+        // 7. Validate partial state
         Validator validator = new Validator();
         if (!validator.isPartiallyValid(board)) {
             System.out.println("\n[VALIDATOR] Partial board has conflicts — solving may fail.");
@@ -105,7 +122,7 @@ public class SolverDriver {
             System.out.println("\n[VALIDATOR] Partial board is consistent.");
         }
 
-        // 7. Solve
+        // 8. Solve
         System.out.println("\nSolving...");
         Solver solver = new Solver();
         long t0      = System.currentTimeMillis();
