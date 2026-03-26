@@ -43,15 +43,33 @@ public class GeneratorDriver {
         System.out.print("Rows (1-10): ");    int rows = readInt(sc, 1, 10);
         System.out.print("Columns (1-10): "); int cols = readInt(sc, 1, 10);
 
-        // 3. Difficulty (fraction of non-fixed cells to remove)
-        System.out.print("Difficulty 0.0 (none removed) to 1.0 (maximum removal): ");
-        double diff = readDouble(sc, 0.0, 1.0);
+        // 3. Additional void cells
+        System.out.print("Extra void cells (0 for none): ");
+        int numVoids = readInt(sc, 0, rows * cols - 2);
 
-        // 4. Generate
+        // 4. Clue mode
+        System.out.println("Clue mode: [1] Difficulty fraction  [2] Exact clue count");
+        System.out.print("> ");
+        int clueMode = readInt(sc, 1, 2);
+
+        // 5. Generate
         Generator generator = new Generator();
         System.out.println("\nGenerating puzzle...");
-        long t0    = System.currentTimeMillis();
-        Board puzzle = generator.generatePuzzle(rows, cols, shape, strategy, diff);
+        long t0 = System.currentTimeMillis();
+        Board puzzle;
+        if (clueMode == 2) {
+            System.out.print("Number of clues (>= 2): ");
+            int numClues = readInt(sc, 2, rows * cols);
+            puzzle = generator.generatePuzzle(rows, cols, shape, strategy, numVoids, numClues);
+        } else {
+            System.out.print("Difficulty 0.0 (none removed) to 1.0 (maximum removal): ");
+            double diff = readDouble(sc, 0.0, 1.0);
+            if (numVoids > 0) {
+                puzzle = generator.generatePuzzle(rows, cols, shape, strategy, numVoids, diff);
+            } else {
+                puzzle = generator.generatePuzzle(rows, cols, shape, strategy, diff);
+            }
+        }
         long elapsed = System.currentTimeMillis() - t0;
 
         if (puzzle == null) {
@@ -91,7 +109,7 @@ public class GeneratorDriver {
         // 7. Generate again?
         System.out.print("\nGenerate another puzzle with the same settings? [y/N] ");
         while (sc.nextLine().trim().equalsIgnoreCase("y")) {
-            Board p2 = generator.generatePuzzle(rows, cols, shape, strategy, diff);
+            Board p2 = generator.generatePuzzle(rows, cols, shape, strategy, 0.4);
             if (p2 == null) { System.out.println("Generation failed."); break; }
             System.out.println("\nPuzzle:");
             System.out.print(p2);
