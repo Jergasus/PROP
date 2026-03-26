@@ -86,7 +86,7 @@ public class Cell implements Serializable {
     
     @Override
     public String toString() {
-        if (isVoid) return " X ";
+        if (isVoid) return " # ";
         if (shape == CellShape.TRIANGLE) {
             boolean pointsUp = (position.row() + position.col()) % 2 == 0;
             String ind = pointsUp ? "^" : "v";
