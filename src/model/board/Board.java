@@ -2,7 +2,11 @@ package model.board;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 import model.adjacency.AdjacencyStrategy;
 import model.cell.Cell;
 import model.cell.CellShape;
@@ -104,6 +108,10 @@ public class Board implements Serializable {
         return cellShape;
     }
 
+    public AdjacencyStrategy getAdjacencyStrategy() {
+        return adjacencyStrategy;
+    }
+
     public String getAdjacencyStrategyName() {
         return adjacencyStrategy.getClass().getSimpleName()
             .replace("AdjacencyStrategy", "")
@@ -113,10 +121,116 @@ public class Board implements Serializable {
             .replace("Triangle", "Triangular");
     }
 
+    /**
+     * Iteratively marks degree-1 cells as void until no dead-ends remain.
+     * A dead-end is a non-void cell with fewer than 2 non-void neighbors.
+     * This is essential for triangle/hex grids where corners may have
+     * only 1 neighbor, making Hamiltonian paths impossible.
+     *
+     * @return the number of cells that were voided
+     */
+    public int pruneDeadEnds() {
+        int totalPruned = 0;
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    Cell cell = grid[i][j];
+                    if (cell.isVoid()) continue;
+                    int neighborCount = getNeighbors(cell.getPosition()).size();
+                    if (neighborCount < 2) {
+                        cell.setVoid(true);
+                        totalPruned++;
+                        changed = true;
+                    }
+                }
+            }
+        }
+        return totalPruned;
+    }
+
+    /**
+     * Randomly places numVoids void cells while keeping all remaining
+     * non-void cells connected.
+     *
+     * @return true if all voids were placed successfully
+     */
+    public boolean placeRandomVoids(int numVoids, Random random) {
+        if (numVoids <= 0) return true;
+        if (numVoids >= getCellCount() - 1) return false;
+
+        List<Position> candidates = new ArrayList<>();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (!grid[i][j].isVoid()) {
+                    candidates.add(new Position(i, j));
+                }
+            }
+        }
+        Collections.shuffle(candidates, random);
+
+        int placed = 0;
+        for (Position pos : candidates) {
+            if (placed >= numVoids) break;
+            Cell cell = grid[pos.row()][pos.col()];
+            cell.setVoid(true);
+            if (isConnected()) {
+                placed++;
+            } else {
+                cell.setVoid(false); // restore — would disconnect the board
+            }
+        }
+        return placed == numVoids;
+    }
+
+    /**
+     * Checks whether all non-void cells form a single connected component
+     * using BFS through the adjacency strategy.
+     */
+    public boolean isConnected() {
+        // Find first non-void cell
+        Position start = null;
+        int totalNonVoid = 0;
+        for (int i = 0; i < rows && start == null; i++) {
+            for (int j = 0; j < cols && start == null; j++) {
+                if (!grid[i][j].isVoid()) {
+                    start = new Position(i, j);
+                }
+            }
+        }
+        if (start == null) return true; // all void is trivially connected
+
+        // BFS
+        boolean[][] visited = new boolean[rows][cols];
+        Queue<Position> queue = new LinkedList<>();
+        queue.add(start);
+        visited[start.row()][start.col()] = true;
+        int reachable = 1;
+
+        while (!queue.isEmpty()) {
+            Position current = queue.poll();
+            for (Cell neighbor : getNeighbors(current)) {
+                Position np = neighbor.getPosition();
+                if (!visited[np.row()][np.col()]) {
+                    visited[np.row()][np.col()] = true;
+                    reachable++;
+                    queue.add(np);
+                }
+            }
+        }
+
+        return reachable == getCellCount();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rows; i++) {
+            // Hex boards: indent odd rows to show offset visually
+            if (cellShape == CellShape.HEXAGON && i % 2 != 0) {
+                sb.append("  ");
+            }
             for (int j = 0; j < cols; j++) {
                 sb.append(grid[i][j].toString());
             }

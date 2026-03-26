@@ -14,20 +14,19 @@ import persistence.game.GameSaver;
 import persistence.level.LevelLoader;
 import persistence.ranking.RankingRepository;
 import persistence.user.UserRepository;
-import view.ConsoleView;
 
 import java.util.List;
 
 public class MenuController {
 
-    private final ConsoleView view;
+    private final DomainController domain;
     private final User currentUser;
     private final LevelCatalog catalog;
     private final UserRepository userRepo;
     private final RankingRepository rankingRepo;
 
-    public MenuController(User currentUser, ConsoleView view) {
-        this.view = view;
+    public MenuController(User currentUser, DomainController domain) {
+        this.domain = domain;
         this.currentUser = currentUser;
         this.catalog = new LevelLoader().loadAllLevels();
         this.userRepo = new UserRepository();
@@ -37,16 +36,16 @@ public class MenuController {
     public void showMainMenu() {
         boolean exit = false;
         while (!exit) {
-            view.printMessage("\n=== MENU PRINCIPAL HIDATO ===");
-            view.printUserProfile(currentUser);
-            view.printMessage("1. Hidatos Pregenerados");
-            view.printMessage("2. Partida Aleatoria");
-            view.printMessage("3. Editor de Hidato");
-            view.printMessage("4. Cargar Partida Guardada");
-            view.printMessage("5. Ver Ranking");
-            view.printMessage("6. Salir");
+            domain.printMessage("\n=== MENU PRINCIPAL HIDATO ===");
+            domain.printUserProfile(currentUser);
+            domain.printMessage("1. Hidatos Pregenerados");
+            domain.printMessage("2. Partida Aleatoria");
+            domain.printMessage("3. Editor de Hidato");
+            domain.printMessage("4. Cargar Partida Guardada");
+            domain.printMessage("5. Ver Ranking");
+            domain.printMessage("6. Salir");
 
-            String option = view.askString("Selecciona una opcion:");
+            String option = domain.askString("Selecciona una opcion:");
 
             switch (option.trim()) {
                 case "1" -> playPregenerated();
@@ -58,28 +57,28 @@ public class MenuController {
                     exit = true;
                     handleExit();
                 }
-                default -> view.printMessage("Opcion no valida.");
+                default -> domain.printMessage("Opcion no valida.");
             }
         }
     }
 
     private void playPregenerated() {
         if (catalog.size() == 0) {
-            view.printMessage("No se encontraron niveles pregenerados en data/levels/.");
+            domain.printMessage("No se encontraron niveles pregenerados en data/levels/.");
             return;
         }
-        LevelSelectController lsc = new LevelSelectController(view, catalog, currentUser);
+        LevelSelectController lsc = new LevelSelectController(domain, catalog, currentUser);
         lsc.showLevelSelect();
     }
 
     private void playRandomGame() {
         java.util.Random rnd = new java.util.Random();
 
-        view.printMessage("\n--- Configuracion de Partida ---");
+        domain.printMessage("\n--- Configuracion de Partida ---");
 
         // 1. Shape
-        view.printMessage("Selecciona Forma de Celdas: [C]uadrado, [H]exagono, [T]riangulo, [R]andom");
-        String shapeStr = view.askString(">").toUpperCase();
+        domain.printMessage("Selecciona Forma de Celdas: [C]uadrado, [H]exagono, [T]riangulo, [R]andom");
+        String shapeStr = domain.askString(">").toUpperCase();
         CellShape shape;
 
         if (shapeStr.startsWith("R")) {
@@ -87,7 +86,7 @@ public class MenuController {
             if (check == 0) shape = CellShape.SQUARE;
             else if (check == 1) shape = CellShape.HEXAGON;
             else shape = CellShape.TRIANGLE;
-            view.printMessage("-> Forma aleatoria elegida: " + shape);
+            domain.printMessage("-> Forma aleatoria elegida: " + shape);
         } else if (shapeStr.startsWith("H")) {
             shape = CellShape.HEXAGON;
         } else if (shapeStr.startsWith("T")) {
@@ -97,42 +96,42 @@ public class MenuController {
         }
 
         // 2. Adjacency
-        view.printMessage("Selecciona Adyacencia: [1] Lados (Ortogonal), [2] Lados+Vertices (Full), [R]andom");
-        String adjStr = view.askString(">").toUpperCase();
+        domain.printMessage("Selecciona Adyacencia: [1] Lados (Ortogonal), [2] Lados+Vertices (Full), [R]andom");
+        String adjStr = domain.askString(">").toUpperCase();
         boolean fullAdj = false;
 
         if (adjStr.startsWith("R")) {
             fullAdj = rnd.nextBoolean();
-            view.printMessage("-> Adyacencia aleatoria elegida: " + (fullAdj ? "Full (Diagonal)" : "Ortogonal"));
+            domain.printMessage("-> Adyacencia aleatoria elegida: " + (fullAdj ? "Full (Diagonal)" : "Ortogonal"));
         } else {
             fullAdj = adjStr.startsWith("2");
         }
 
         // 3. Size
-        view.printMessage("Tamano del lado (ej. 5 para 5x5) o [R]andom (3-8):");
-        String sizeStr = view.askString(">").toUpperCase();
+        domain.printMessage("Tamano del lado (ej. 5 para 5x5) o [R]andom (3-8):");
+        String sizeStr = domain.askString(">").toUpperCase();
         int size = 5;
 
         if (sizeStr.startsWith("R")) {
             size = 3 + rnd.nextInt(6);
-            view.printMessage("-> Tamano aleatorio elegido: " + size);
+            domain.printMessage("-> Tamano aleatorio elegido: " + size);
         } else {
             try {
                 size = Integer.parseInt(sizeStr);
             } catch (Exception e) {
-                view.printMessage("Tamano invalido, usando 5 por defecto.");
+                domain.printMessage("Tamano invalido, usando 5 por defecto.");
             }
         }
 
         // 4. Difficulty
-        view.printMessage("Dificultad (0.0 facil - 1.0 dificil) o [R]andom:");
-        String diffStr = view.askString(">").toUpperCase();
+        domain.printMessage("Dificultad (0.0 facil - 1.0 dificil) o [R]andom:");
+        String diffStr = domain.askString(">").toUpperCase();
         double diff = 0.4;
 
         if (diffStr.startsWith("R")) {
             diff = 0.2 + (rnd.nextDouble() * 0.4);
             diff = Math.round(diff * 100.0) / 100.0;
-            view.printMessage("-> Dificultad aleatoria elegida: " + diff);
+            domain.printMessage("-> Dificultad aleatoria elegida: " + diff);
         } else {
             try {
                 double inputDiff = Double.parseDouble(diffStr);
@@ -141,7 +140,7 @@ public class MenuController {
                 if (diff < 0.1) diff = 0.1;
                 if (diff > 0.8) diff = 0.8;
             } catch (Exception e) {
-                view.printMessage("Dificultad invalida, usando media por defecto.");
+                domain.printMessage("Dificultad invalida, usando media por defecto.");
                 diff = 0.4;
             }
         }
@@ -157,24 +156,45 @@ public class MenuController {
             strategy = new SquareAdjacencyStrategy();
         }
 
-        view.printMessage("Generando...");
+        // 5. Void cells
+        domain.printMessage("Numero de celdas vacias/agujeros (0 para ninguna) o [R]andom:");
+        String voidStr = domain.askString(">").toUpperCase();
+        int numVoids = 0;
+        if (voidStr.startsWith("R")) {
+            numVoids = rnd.nextInt(Math.max(1, (size * size) / 4));
+            domain.printMessage("-> Agujeros aleatorios: " + numVoids);
+        } else {
+            try {
+                numVoids = Integer.parseInt(voidStr);
+                if (numVoids < 0) numVoids = 0;
+            } catch (Exception e) {
+                numVoids = 0;
+            }
+        }
+
+        domain.printMessage("Generando...");
         Generator generator = new Generator();
-        Board board = generator.generatePuzzle(size, size, shape, strategy, diff);
+        Board board;
+        if (numVoids > 0) {
+            board = generator.generatePuzzle(size, size, shape, strategy, numVoids, diff);
+        } else {
+            board = generator.generatePuzzle(size, size, shape, strategy, diff);
+        }
 
         if (board != null) {
             Game game = new Game(board);
-            GameController gc = new GameController(game, view);
+            GameController gc = new GameController(game, domain);
             gc.play();
         } else {
-            view.printMessage("Error al generar el tablero. Intenta con otros parametros.");
+            domain.printMessage("Error al generar el tablero. Intenta con otros parametros.");
         }
     }
 
     private void openEditor() {
-        view.printMessage("\n--- Editor de Hidato ---");
-        view.printMessage("Configura tu tablero vacio:");
-        view.printMessage("Selecciona Forma: [C]uadrado, [H]exagono, [T]riangulo");
-        String shapeStr = view.askString(">").toUpperCase();
+        domain.printMessage("\n--- Editor de Hidato ---");
+        domain.printMessage("Configura tu tablero vacio:");
+        domain.printMessage("Selecciona Forma: [C]uadrado, [H]exagono, [T]riangulo");
+        String shapeStr = domain.askString(">").toUpperCase();
         CellShape shape;
         if (shapeStr.startsWith("H")) {
             shape = CellShape.HEXAGON;
@@ -184,12 +204,12 @@ public class MenuController {
             shape = CellShape.SQUARE;
         }
 
-        view.printMessage("Tamano (ej. 5):");
+        domain.printMessage("Tamano (ej. 5):");
         int size = 5;
         try {
-            size = Integer.parseInt(view.askString(">"));
+            size = Integer.parseInt(domain.askString(">"));
         } catch (NumberFormatException e) {
-            view.printMessage("Tamano invalido, usando 5.");
+            domain.printMessage("Tamano invalido, usando 5.");
         }
 
         AdjacencyStrategy strategy;
@@ -198,23 +218,23 @@ public class MenuController {
         } else if (shape == CellShape.TRIANGLE) {
             strategy = new TriangleAdjacencyStrategy();
         } else {
-            view.printMessage("Adyacencia: [1] Lados (Ortogonal), [2] Lados+Vertices (Full/Diagonal)");
-            String adjStr = view.askString(">");
+            domain.printMessage("Adyacencia: [1] Lados (Ortogonal), [2] Lados+Vertices (Full/Diagonal)");
+            String adjStr = domain.askString(">");
             strategy = adjStr.startsWith("2") ? new SquareFullAdjacencyStrategy() : new SquareAdjacencyStrategy();
         }
 
         Board emptyBoard = new Board(size, size, shape, strategy);
-        EditorController editor = new EditorController(emptyBoard, view);
+        EditorController editor = new EditorController(emptyBoard, domain);
         editor.startEditor();
     }
 
     private void loadGame() {
-        view.printMessage("Nombre del archivo a cargar (sin extension):");
-        String name = view.askString(">");
+        domain.printMessage("Nombre del archivo a cargar (sin extension):");
+        String name = domain.askString(">");
         File f = new File(name + ".hidato");
 
         if (!f.exists()) {
-            view.printMessage("No existe archivo " + name + ".hidato");
+            domain.printMessage("No existe archivo " + name + ".hidato");
             return;
         }
 
@@ -222,33 +242,33 @@ public class MenuController {
             GameSaver saver = new GameSaver();
             Game game = saver.loadGame(name + ".hidato");
             if (game == null) {
-                view.printMessage("Error: partida corrupta o vacia.");
+                domain.printMessage("Error: partida corrupta o vacia.");
                 return;
             }
-            view.printMessage("Partida cargada. Tiempo acumulado: " + view.formatTime(game.getElapsedTime()));
+            domain.printMessage("Partida cargada. Tiempo acumulado: " + domain.formatTime(game.getElapsedTime()));
 
-            GameController gc = new GameController(game, view);
+            GameController gc = new GameController(game, domain);
             gc.play();
         } catch (Exception e) {
-            view.printMessage("Error cargando partida: " + e.getMessage());
+            domain.printMessage("Error cargando partida: " + e.getMessage());
         }
     }
 
     private void showRanking() {
         List<RankingEntry> entries = rankingRepo.loadRanking();
-        view.printPointRanking(entries);
+        domain.printPointRanking(entries);
     }
 
     private void handleExit() {
         if (currentUser.getTotalPoints() > 0) {
-            boolean update = view.askYesNo("Actualizar ranking global con tus " + currentUser.getTotalPoints() + " puntos?");
+            boolean update = domain.askYesNo("Actualizar ranking global con tus " + currentUser.getTotalPoints() + " puntos?");
             if (update) {
                 try {
                     rankingRepo.updateEntry(currentUser.getUsername(), currentUser.getTotalPoints());
-                    view.printMessage("Ranking actualizado.");
-                    view.printPointRanking(rankingRepo.loadRanking());
+                    domain.printMessage("Ranking actualizado.");
+                    domain.printPointRanking(rankingRepo.loadRanking());
                 } catch (IOException e) {
-                    view.printMessage("Error al actualizar ranking: " + e.getMessage());
+                    domain.printMessage("Error al actualizar ranking: " + e.getMessage());
                 }
             }
         }
@@ -257,9 +277,9 @@ public class MenuController {
         try {
             userRepo.saveUser(currentUser);
         } catch (IOException e) {
-            view.printMessage("Error al guardar perfil: " + e.getMessage());
+            domain.printMessage("Error al guardar perfil: " + e.getMessage());
         }
 
-        view.printMessage("Hasta luego, " + currentUser.getUsername() + "!");
+        domain.printMessage("Hasta luego, " + currentUser.getUsername() + "!");
     }
 }

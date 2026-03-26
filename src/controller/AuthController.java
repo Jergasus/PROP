@@ -2,27 +2,26 @@ package controller;
 
 import model.user.User;
 import persistence.user.UserRepository;
-import view.ConsoleView;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class AuthController {
-    private final ConsoleView view;
+    private final DomainController domain;
     private final UserRepository userRepo;
 
-    public AuthController(ConsoleView view) {
-        this.view = view;
+    public AuthController(DomainController domain) {
+        this.domain = domain;
         this.userRepo = new UserRepository();
     }
 
     public User authenticate() {
         while (true) {
-            view.printMessage("\n=== HIDATO - AUTENTICACION ===");
-            view.printMessage("1. Iniciar Sesion");
-            view.printMessage("2. Registrarse");
-            String option = view.askString("Selecciona una opcion:");
+            domain.printMessage("\n=== HIDATO - AUTENTICACION ===");
+            domain.printMessage("1. Iniciar Sesion");
+            domain.printMessage("2. Registrarse");
+            String option = domain.askString("Selecciona una opcion:");
 
             switch (option.trim()) {
                 case "1": {
@@ -36,57 +35,57 @@ public class AuthController {
                     break;
                 }
                 default:
-                    view.printMessage("Opcion no valida.");
+                    domain.printMessage("Opcion no valida.");
             }
         }
     }
 
     private User login() {
-        String username = view.askString("Usuario:").trim();
+        String username = domain.askString("Usuario:").trim();
         if (username.isEmpty()) {
-            view.printMessage("Nombre de usuario vacio.");
+            domain.printMessage("Nombre de usuario vacio.");
             return null;
         }
 
-        String password = view.askString("Contrasena:");
+        String password = domain.askString("Contrasena:");
 
         try {
             User user = userRepo.loadUser(username);
             if (user == null) {
-                view.printMessage("Usuario no encontrado.");
+                domain.printMessage("Usuario no encontrado.");
                 return null;
             }
 
             String hash = hashPassword(password);
             if (!hash.equals(user.getPasswordHash())) {
-                view.printMessage("Contrasena incorrecta.");
+                domain.printMessage("Contrasena incorrecta.");
                 return null;
             }
 
-            view.printMessage("Bienvenido de nuevo, " + username + "!");
-            view.printUserProfile(user);
+            domain.printMessage("Bienvenido de nuevo, " + username + "!");
+            domain.printUserProfile(user);
             return user;
         } catch (IOException e) {
-            view.printMessage("Error al cargar usuario: " + e.getMessage());
+            domain.printMessage("Error al cargar usuario: " + e.getMessage());
             return null;
         }
     }
 
     private User register() {
-        String username = view.askString("Elige un nombre de usuario:").trim();
+        String username = domain.askString("Elige un nombre de usuario:").trim();
         if (username.isEmpty()) {
-            view.printMessage("Nombre de usuario vacio.");
+            domain.printMessage("Nombre de usuario vacio.");
             return null;
         }
 
         if (userRepo.userExists(username)) {
-            view.printMessage("Ese nombre de usuario ya existe.");
+            domain.printMessage("Ese nombre de usuario ya existe.");
             return null;
         }
 
-        String password = view.askString("Elige una contrasena:");
+        String password = domain.askString("Elige una contrasena:");
         if (password.trim().isEmpty()) {
-            view.printMessage("Contrasena vacia.");
+            domain.printMessage("Contrasena vacia.");
             return null;
         }
 
@@ -95,10 +94,10 @@ public class AuthController {
 
         try {
             userRepo.saveUser(user);
-            view.printMessage("Usuario registrado correctamente. Bienvenido, " + username + "!");
+            domain.printMessage("Usuario registrado correctamente. Bienvenido, " + username + "!");
             return user;
         } catch (IOException e) {
-            view.printMessage("Error al guardar usuario: " + e.getMessage());
+            domain.printMessage("Error al guardar usuario: " + e.getMessage());
             return null;
         }
     }

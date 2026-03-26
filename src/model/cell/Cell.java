@@ -87,6 +87,12 @@ public class Cell implements Serializable {
     @Override
     public String toString() {
         if (isVoid) return " X ";
+        if (shape == CellShape.TRIANGLE) {
+            boolean pointsUp = (position.row() + position.col()) % 2 == 0;
+            String ind = pointsUp ? "^" : "v";
+            if (value == 0) return " " + ind + " ";
+            return String.format("%s%-2d", ind, value);
+        }
         if (value == 0) return " . ";
         return String.format("%3d", value);
     }

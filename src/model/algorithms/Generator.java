@@ -96,10 +96,21 @@ public class Generator {
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             Board board = new Board(rows, cols, shape, strategy);
 
-            // Pick a random starting cell for value 1
-            int startR = random.nextInt(rows);
-            int startC = random.nextInt(cols);
-            board.getCell(startR, startC).setValue(1);
+            // Prune dead-end cells (essential for triangle grids)
+            board.pruneDeadEnds();
+
+            int playable = board.getCellCount();
+            if (playable < 2) continue;
+
+            // Pick a random non-void starting cell
+            List<Cell> nonVoid = new ArrayList<>();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (!board.getCell(i, j).isVoid()) nonVoid.add(board.getCell(i, j));
+                }
+            }
+            Cell start = nonVoid.get(random.nextInt(nonVoid.size()));
+            start.setValue(1);
 
             if (solver.solve(board)) {
                 return board;
@@ -113,6 +124,147 @@ public class Generator {
      */
     public Board generateFullBoard(int rows, int cols, CellShape shape) {
         return generateFullBoard(rows, cols, shape, defaultStrategy(shape));
+    }
+
+    /**
+     * Generates a puzzle with explicit void cells and clue count.
+     *
+     * @param numVoids  number of void (hole) cells to place randomly
+     * @param numClues  number of fixed clue cells in the final puzzle (>= 2)
+     * @return a valid puzzle board, or null if generation failed
+     */
+    public Board generatePuzzle(int rows, int cols, CellShape shape,
+                                AdjacencyStrategy strategy,
+                                int numVoids, int numClues) {
+        if (numClues < 2) return null;
+
+        Board board = generateFullBoard(rows, cols, shape, strategy, numVoids);
+        if (board == null) return null;
+
+        int maxVal = board.getCellCount();
+        if (numClues > maxVal) return null;
+
+        // Mark all non-void cells as fixed, collect removal candidates
+        List<Cell> candidates = new ArrayList<>();
+        for (int i = 0; i < board.getRows(); i++) {
+            for (int j = 0; j < board.getCols(); j++) {
+                Cell c = board.getCell(i, j);
+                if (!c.isVoid()) {
+                    c.setFixedValue(c.getValue());
+                    if (c.getValue() != 1 && c.getValue() != maxVal) {
+                        candidates.add(c);
+                    }
+                }
+            }
+        }
+
+        Collections.shuffle(candidates, random);
+
+        // We always keep 1 and maxVal as clues, so removable target is:
+        // current fixed count (maxVal) minus desired numClues
+        Solver solver = new Solver();
+        int targetToRemove = maxVal - numClues;
+        int removedCount = 0;
+
+        for (Cell c : candidates) {
+            if (removedCount >= targetToRemove) break;
+
+            int originalValue = c.getValue();
+            c.setAsEmpty();
+
+            if (solver.countSolutions(board, 2) == 1) {
+                removedCount++;
+            } else {
+                c.setFixedValue(originalValue);
+            }
+        }
+
+        return board;
+    }
+
+    /**
+     * Generates a puzzle with void cells and difficulty fraction.
+     */
+    public Board generatePuzzle(int rows, int cols, CellShape shape,
+                                AdjacencyStrategy strategy,
+                                int numVoids, double difficulty) {
+        Board board = generateFullBoard(rows, cols, shape, strategy, numVoids);
+        if (board == null) return null;
+
+        int maxVal = board.getCellCount();
+
+        List<Cell> candidates = new ArrayList<>();
+        for (int i = 0; i < board.getRows(); i++) {
+            for (int j = 0; j < board.getCols(); j++) {
+                Cell c = board.getCell(i, j);
+                if (!c.isVoid()) {
+                    c.setFixedValue(c.getValue());
+                    if (c.getValue() != 1 && c.getValue() != maxVal) {
+                        candidates.add(c);
+                    }
+                }
+            }
+        }
+
+        Collections.shuffle(candidates, random);
+
+        Solver solver = new Solver();
+        int targetToRemove = (int) (candidates.size() * difficulty);
+        int removedCount = 0;
+
+        for (Cell c : candidates) {
+            if (removedCount >= targetToRemove) break;
+
+            int originalValue = c.getValue();
+            c.setAsEmpty();
+
+            if (solver.countSolutions(board, 2) == 1) {
+                removedCount++;
+            } else {
+                c.setFixedValue(originalValue);
+            }
+        }
+
+        return board;
+    }
+
+    /**
+     * Generates a fully solved board with random void cells.
+     * Also prunes dead-end cells (degree < 2) to ensure solvability.
+     */
+    public Board generateFullBoard(int rows, int cols, CellShape shape,
+                                   AdjacencyStrategy strategy, int numVoids) {
+        Solver solver = new Solver();
+
+        for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+            Board board = new Board(rows, cols, shape, strategy);
+
+            // Prune dead-end cells first (essential for triangle grids)
+            board.pruneDeadEnds();
+
+            // Then place additional random voids
+            if (numVoids > 0 && !board.placeRandomVoids(numVoids, random)) {
+                continue; // couldn't place all voids, retry
+            }
+
+            int playable = board.getCellCount();
+            if (playable < 2) continue;
+
+            // Pick a random non-void starting cell
+            List<Cell> nonVoid = new ArrayList<>();
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    if (!board.getCell(i, j).isVoid()) nonVoid.add(board.getCell(i, j));
+                }
+            }
+            Cell start = nonVoid.get(random.nextInt(nonVoid.size()));
+            start.setValue(1);
+
+            if (solver.solve(board)) {
+                return board;
+            }
+        }
+        return null;
     }
 
     // -----------------------------------------------------------------------

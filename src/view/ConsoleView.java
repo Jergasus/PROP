@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import model.board.Board;
+import model.game.MoveInput;
 import model.level.Level;
 import model.ranking.RankingEntry;
 import model.user.LevelProgress;
@@ -155,8 +156,6 @@ public class ConsoleView {
     public void printBoard(Board board) {
         System.out.println(board.toString());
     }
-
-    public record MoveInput(int row, int col, int value) {}
 
     public MoveInput askMove() {
         System.out.println("Introduce jugada (fila columna valor).");
