@@ -43,6 +43,13 @@ public class SolverDriver {
         System.out.print("Columns: "); int cols = readInt(sc, 1, 20);
         Board board = new Board(rows, cols, shape, strategy);
 
+        // Auto-prune structural dead-ends (cells with < 2 neighbors)
+        int pruned = board.pruneDeadEnds();
+        if (pruned > 0) {
+            System.out.println("\nAuto-voided " + pruned + " dead-end cell(s) (shown as #):");
+            System.out.print(board);
+        }
+
         // 3. Mark void cells
         System.out.println("\nMark void cells (enter 'row col', blank line to stop):");
         while (true) {
@@ -58,6 +65,12 @@ public class SolverDriver {
                 board.getCell(r, c).setVoid(true);
                 System.out.println("  (" + r + "," + c + ") marked as void");
             } catch (NumberFormatException e) { System.out.println("  Invalid input"); }
+        }
+
+        // Re-prune in case manual voids created new dead ends
+        int repruned = board.pruneDeadEnds();
+        if (repruned > 0) {
+            System.out.println("  Auto-voided " + repruned + " additional dead-end cell(s).");
         }
 
         // 4. Enter clues
