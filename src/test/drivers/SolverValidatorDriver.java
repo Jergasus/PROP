@@ -2,10 +2,9 @@ package test.drivers;
 
 import controller.DomainController;
 import controller.HidatoCaseController;
-import model.board.Board;
-
 import java.util.List;
 import java.util.Scanner;
+import model.board.Board;
 
 /**
  * Interactive demo driver for Solver and Validator.
@@ -21,7 +20,7 @@ import java.util.Scanner;
  */
 public class SolverDriver {
 
-    private static final Scanner          sc     = new Scanner(System.in);
+    private static final Scanner sc = new Scanner(System.in);
     private static final DomainController domain = new DomainController();
 
     public static void main(String[] args) {
