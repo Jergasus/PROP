@@ -1,178 +1,185 @@
 package test.drivers;
 
-import java.util.Scanner;
-import model.adjacency.*;
-import model.algorithms.Solver;
-import model.algorithms.Validator;
 import model.board.Board;
-import model.cell.CellShape;
+
+import java.util.List;
+import java.util.Scanner;
 
 /**
- * Interactive driver for Solver and Validator.
+ * Interactive demo driver for Solver and Validator.
+ *
+ * All domain calls go through DomainController — this class handles
+ * only console I/O and menu navigation.
  *
  * Usage:
- *   java -cp out test.drivers.SolverDriver
- *
- * The driver lets you specify a board size and type, enter clue values
- * interactively, then asks Solver to find a solution and Validator to
- * confirm it.  It also reports how long the solver took.
+ *   ./compilar.sh
+ *   — or —
+ *   javac -cp "lib/*" -d out $(find src -name "*.java")
+ *   java  -cp "out:lib/*" test.drivers.SolverDriver
  */
 public class SolverDriver {
 
+    private static final Scanner          sc     = new Scanner(System.in);
+    private static final DomainController domain = new DomainController();
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("==============================================");
-        System.out.println("  HIDATO — Solver & Validator Interactive Driver");
-        System.out.println("==============================================");
+        printBanner();
 
-        // 1. Choose cell type
-        System.out.println("Cell type: [1] Square-4way  [2] Square-8way  [3] Hexagonal  [4] Triangle");
-        System.out.print("> ");
-        int typeChoice = readInt(sc, 1, 4);
-        CellShape shape;
-        AdjacencyStrategy strategy;
-        switch (typeChoice) {
-            case 1: shape = CellShape.SQUARE;   strategy = new SquareAdjacencyStrategy();     break;
-            case 2: shape = CellShape.SQUARE;   strategy = new SquareFullAdjacencyStrategy(); break;
-            case 3: shape = CellShape.HEXAGON;  strategy = new HexagonalAdjacencyStrategy();  break;
-            default:shape = CellShape.TRIANGLE; strategy = new TriangleAdjacencyStrategy();   break;
-        }
+        boolean running = true;
+        while (running) {
+            printMainMenu();
+            int choice = readInt(0, 2);
 
-        // 2. Board dimensions
-        System.out.print("Rows: ");    int rows = readInt(sc, 1, 20);
-        System.out.print("Columns: "); int cols = readInt(sc, 1, 20);
-        Board board = new Board(rows, cols, shape, strategy);
-
-        // Auto-prune structural dead-ends (cells with < 2 neighbors)
-        int pruned = board.pruneDeadEnds();
-        if (pruned > 0) {
-            System.out.println("\nAuto-voided " + pruned + " dead-end cell(s) (shown as #):");
-            System.out.print(board);
-        }
-
-        // 3. Mark void cells
-        System.out.println("\nMark void cells (enter 'row col', blank line to stop):");
-        while (true) {
-            System.out.print("  void> ");
-            String line = sc.nextLine().trim();
-            if (line.isEmpty()) break;
-            String[] parts = line.split("\\s+");
-            if (parts.length < 2) { System.out.println("  Format: row col"); continue; }
-            try {
-                int r = Integer.parseInt(parts[0]);
-                int c = Integer.parseInt(parts[1]);
-                if (r < 0 || r >= rows || c < 0 || c >= cols) { System.out.println("  Out of bounds"); continue; }
-                board.getCell(r, c).setVoid(true);
-                System.out.println("  (" + r + "," + c + ") marked as void");
-            } catch (NumberFormatException e) { System.out.println("  Invalid input"); }
-        }
-
-        // Re-prune in case manual voids created new dead ends
-        int repruned = board.pruneDeadEnds();
-        if (repruned > 0) {
-            System.out.println("  Auto-voided " + repruned + " additional dead-end cell(s).");
-        }
-
-        // 4. Enter clues
-        System.out.println("\nEnter clues (enter 'row col value', blank line to stop):");
-        System.out.println("  (value 1 is mandatory — it is the start of the path)");
-        while (true) {
-            System.out.print("  clue> ");
-            String line = sc.nextLine().trim();
-            if (line.isEmpty()) break;
-            String[] parts = line.split("\\s+");
-            if (parts.length < 3) { System.out.println("  Format: row col value"); continue; }
-            try {
-                int r = Integer.parseInt(parts[0]);
-                int c = Integer.parseInt(parts[1]);
-                int v = Integer.parseInt(parts[2]);
-                if (r < 0 || r >= rows || c < 0 || c >= cols) { System.out.println("  Out of bounds"); continue; }
-                if (board.getCell(r, c).isVoid()) { System.out.println("  Cell is void"); continue; }
-                board.getCell(r, c).setFixedValue(v);
-                System.out.println("  Placed " + v + " at (" + r + "," + c + ")");
-            } catch (NumberFormatException e) { System.out.println("  Invalid input"); }
-        }
-
-        // 5. Show board before solving
-        System.out.println("\nBoard before solving:");
-        System.out.print(board);
-
-        // 6. Check value 1 is placed
-        boolean hasOne = false;
-        outer:
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (board.getCell(i, j).isFixed() && board.getCell(i, j).getValue() == 1) {
-                    hasOne = true;
-                    break outer;
-                }
+            switch (choice) {
+                case 0:
+                    running = false;
+                    break;
+                case 1:
+                    handleFlow(false); // validate
+                    break;
+                case 2:
+                    handleFlow(true);  // solve
+                    break;
             }
         }
-        if (!hasOne) {
-            System.out.println("\n[ERROR] Value 1 (start of path) was not placed. Add it as a clue and try again.");
-            sc.close();
-            return;
-        }
 
-        // 7. Validate partial state
-        Validator validator = new Validator();
-        if (!validator.isPartiallyValid(board)) {
-            System.out.println("\n[VALIDATOR] Partial board has conflicts — solving may fail.");
-        } else {
-            System.out.println("\n[VALIDATOR] Partial board is consistent.");
-        }
-
-        // 8. Solve
-        System.out.println("\nSolving...");
-        Solver solver = new Solver();
-        long t0      = System.currentTimeMillis();
-        boolean ok   = solver.solve(board);
-        long elapsed = System.currentTimeMillis() - t0;
-
-        if (ok) {
-            System.out.println("\nSolution found in " + elapsed + " ms:\n");
-            System.out.print(board);
-            System.out.println("\n[VALIDATOR] Solution is " +
-                (validator.isValidSolution(board) ? "VALID ✓" : "INVALID ✗ (bug!)"));
-        } else {
-            System.out.println("\nNo solution found (" + elapsed + " ms). The puzzle is unsolvable.");
-        }
-
-        // 8. Count solutions (optional)
-        System.out.print("\nCount distinct solutions? [y/N] ");
-        String ans = sc.nextLine().trim();
-        if (ans.equalsIgnoreCase("y")) {
-            // Rebuild the original clue board (solver mutated it)
-            // Re-read from board (fixed cells kept their values)
-            int limit = 5;
-            System.out.println("Counting solutions (limit=" + limit + ")...");
-            // Rebuild fresh board from fixed values
-            Board fresh = new Board(rows, cols, shape, strategy);
-            for (int i = 0; i < rows; i++)
-                for (int j = 0; j < cols; j++) {
-                    if (board.getCell(i, j).isVoid()) { fresh.getCell(i, j).setVoid(true); continue; }
-                    if (board.getCell(i, j).isFixed()) fresh.getCell(i, j).setFixedValue(board.getCell(i,j).getValue());
-                }
-            long t1 = System.currentTimeMillis();
-            int count = solver.countSolutions(fresh, limit);
-            long e2 = System.currentTimeMillis() - t1;
-            System.out.println("Solutions found: " + (count >= limit ? ">= " + limit : count) + "  (" + e2 + " ms)");
-        }
-
-        System.out.println("\nDone.");
+        System.out.println("\nGoodbye.");
         sc.close();
     }
 
-    private static int readInt(Scanner sc, int min, int max) {
+    // ------------------------------------------------------------------ //
+    //  High-level flows                                                   //
+    // ------------------------------------------------------------------ //
+
+    private static void handleFlow(boolean solve) {
+        List<HidatoCase> catalog = domain.getCatalog();
+        printCatalog(catalog);
+
+        System.out.print("Select case (0 to go back): ");
+        int idx = readInt(0, catalog.size());
+        if (idx == 0) return;
+
+        System.out.println();
+        HidatoCase tc = domain.getCase(idx - 1);
+
+        if (solve) runSolve(tc);
+        else       runValidate(tc);
+
+        System.out.println("\nPress ENTER to continue...");
+        sc.nextLine();
+    }
+
+    // ── VALIDATE ────────────────────────────────────────────────────────
+
+    private static void runValidate(HidatoCase tc) {
+        Board board = tc.getBoard();
+        printSectionHeader("VALIDATE  —  " + tc.getName());
+
+        System.out.println("Puzzle state:");
+        System.out.print(board);
+        System.out.println();
+
+        boolean partial = domain.isPartiallyValid(board);
+        System.out.println("  Partial validity : " + (partial ? "CONSISTENT  ✓" : "CONTRADICTIONS FOUND  ✗"));
+
+        boolean full = domain.isValidSolution(board);
+        System.out.println("  Full solution    : " + (full ? "VALID  ✓" : "incomplete (puzzle input, expected)"));
+
+        System.out.println();
+        printExpected(tc);
+    }
+
+    // ── SOLVE ────────────────────────────────────────────────────────────
+
+    private static void runSolve(HidatoCase tc) {
+        Board board = tc.getBoard();
+        printSectionHeader("SOLVE  —  " + tc.getName());
+
+        System.out.println("Puzzle:");
+        System.out.print(board);
+        System.out.println();
+
+        if (!domain.isPartiallyValid(board)) {
+            System.out.println("  [ERROR] Puzzle has contradictions — solving aborted.");
+            System.out.println();
+            printExpected(tc);
+            return;
+        }
+
+        System.out.println("  Solving...");
+        long    t0      = System.currentTimeMillis();
+        boolean solved  = domain.solve(board);
+        long    elapsed = System.currentTimeMillis() - t0;
+
+        if (solved) {
+            System.out.println("  Solution found in " + elapsed + " ms:\n");
+            System.out.print(board);
+            boolean valid = domain.isValidSolution(board);
+            System.out.println("\n  Validator: " + (valid ? "VALID  ✓" : "INVALID  ✗  (bug!)"));
+        } else {
+            System.out.println("  No solution found (" + elapsed + " ms). Puzzle is unsolvable.");
+        }
+
+        System.out.println();
+        printExpected(tc);
+        boolean correct = solved == tc.isExpectedSolvable();
+        System.out.println("  Matches expected outcome: " + (correct ? "YES  ✓" : "NO  ✗"));
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Display helpers                                                    //
+    // ------------------------------------------------------------------ //
+
+    private static void printBanner() {
+        System.out.println("==============================================");
+        System.out.println("   HIDATO  —  Solver & Validator Demo");
+        System.out.println("==============================================");
+        System.out.println();
+    }
+
+    private static void printMainMenu() {
+        System.out.println("----------------------------------------------");
+        System.out.println("  [1] Validate    [2] Solve    [0] Exit");
+        System.out.println("----------------------------------------------");
+        System.out.print("> ");
+    }
+
+    private static void printCatalog(List<HidatoCase> catalog) {
+        System.out.println();
+        System.out.println("  Available test cases:");
+        System.out.println();
+        for (int i = 0; i < catalog.size(); i++) {
+            HidatoCase tc = catalog.get(i);
+            String outcome = tc.isExpectedSolvable() ? "SOLVABLE" : "UNSOLVABLE";
+            System.out.printf("  [%d] %s  (%s)%n", i + 1, tc.getName(), outcome);
+            System.out.printf("      Adjacency: %s%n", tc.getAdjacencyDesc());
+            System.out.printf("      %s%n", tc.getDescription());
+            System.out.println();
+        }
+    }
+
+    private static void printSectionHeader(String title) {
+        System.out.println("----------------------------------------------");
+        System.out.println("  " + title);
+        System.out.println("----------------------------------------------");
+    }
+
+    private static void printExpected(HidatoCase tc) {
+        System.out.println("  Expected: " + (tc.isExpectedSolvable() ? "SOLVABLE" : "UNSOLVABLE"));
+        System.out.println("  " + tc.getDescription());
+    }
+
+    // ------------------------------------------------------------------ //
+    //  Input helper                                                       //
+    // ------------------------------------------------------------------ //
+
+    private static int readInt(int min, int max) {
         while (true) {
             try {
-                String line = sc.nextLine().trim();
-                int v = Integer.parseInt(line);
+                int v = Integer.parseInt(sc.nextLine().trim());
                 if (v >= min && v <= max) return v;
-                System.out.print("  Enter a value between " + min + " and " + max + ": ");
-            } catch (NumberFormatException e) {
-                System.out.print("  Invalid input, try again: ");
-            }
+            } catch (NumberFormatException ignored) {}
+            System.out.printf("  Enter a number between %d and %d: ", min, max);
         }
     }
 }
