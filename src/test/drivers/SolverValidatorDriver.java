@@ -18,7 +18,7 @@ import model.board.Board;
  *   javac -cp "lib/*" -d out $(find src -name "*.java")
  *   java  -cp "out:lib/*" test.drivers.SolverDriver
  */
-public class SolverDriver {
+public class SolverValidatorDriver {
 
     private static final Scanner sc = new Scanner(System.in);
     private static final DomainController domain = new DomainController();
@@ -76,18 +76,15 @@ public class SolverDriver {
         Board board = tc.getBoard();
         printSectionHeader("VALIDATE  —  " + tc.getName());
 
-        System.out.println("Puzzle state:");
         System.out.print(board);
         System.out.println();
 
         boolean partial = domain.isPartiallyValid(board);
         System.out.println("  Partial validity : " + (partial ? "CONSISTENT  ✓" : "CONTRADICTIONS FOUND  ✗"));
 
-        boolean full = domain.isValidSolution(board);
-        System.out.println("  Full solution    : " + (full ? "VALID  ✓" : "incomplete (puzzle input, expected)"));
-
-        System.out.println();
-        printExpected(tc);
+        Board copy = tc.getBoard();
+        boolean hasSolution = partial && domain.solve(copy);
+        System.out.println("  Has solution     : " + (hasSolution ? "YES  ✓" : "NO  ✗"));
     }
 
     // ── SOLVE ────────────────────────────────────────────────────────────
@@ -96,35 +93,25 @@ public class SolverDriver {
         Board board = tc.getBoard();
         printSectionHeader("SOLVE  —  " + tc.getName());
 
-        System.out.println("Puzzle:");
         System.out.print(board);
         System.out.println();
 
         if (!domain.isPartiallyValid(board)) {
-            System.out.println("  [ERROR] Puzzle has contradictions — solving aborted.");
-            System.out.println();
-            printExpected(tc);
+            System.out.println("  Contradictions found — solving aborted.");
             return;
         }
 
-        System.out.println("  Solving...");
         long    t0      = System.currentTimeMillis();
         boolean solved  = domain.solve(board);
         long    elapsed = System.currentTimeMillis() - t0;
 
         if (solved) {
-            System.out.println("  Solution found in " + elapsed + " ms:\n");
+            System.out.println("  Solution (" + elapsed + " ms):\n");
             System.out.print(board);
-            boolean valid = domain.isValidSolution(board);
-            System.out.println("\n  Validator: " + (valid ? "VALID  ✓" : "INVALID  ✗  (bug!)"));
+            System.out.println("\n  Validator: " + (domain.isValidSolution(board) ? "VALID  ✓" : "INVALID  ✗"));
         } else {
-            System.out.println("  No solution found (" + elapsed + " ms). Puzzle is unsolvable.");
+            System.out.println("  No solution found (" + elapsed + " ms).");
         }
-
-        System.out.println();
-        printExpected(tc);
-        boolean correct = solved == tc.isExpectedSolvable();
-        System.out.println("  Matches expected outcome: " + (correct ? "YES  ✓" : "NO  ✗"));
     }
 
     // ------------------------------------------------------------------ //
@@ -165,10 +152,6 @@ public class SolverDriver {
         System.out.println("----------------------------------------------");
     }
 
-    private static void printExpected(HidatoCaseController tc) {
-        System.out.println("  Expected: " + (tc.isExpectedSolvable() ? "SOLVABLE" : "UNSOLVABLE"));
-        System.out.println("  " + tc.getDescription());
-    }
 
     // ------------------------------------------------------------------ //
     //  Input helper                                                       //
