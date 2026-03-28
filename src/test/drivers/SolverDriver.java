@@ -1,5 +1,7 @@
 package test.drivers;
 
+import controller.DomainController;
+import controller.HidatoCase;
 import model.board.Board;
 
 import java.util.List;

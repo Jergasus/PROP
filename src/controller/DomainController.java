@@ -1,4 +1,4 @@
-package test.drivers;
+package controller;
 
 import model.adjacency.*;
 import model.algorithms.Solver;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class DomainController {
 
-    private final Solver   solver    = new Solver();
+    private final Solver    solver    = new Solver();
     private final Validator validator = new Validator();
     private final List<HidatoCase> catalog;
 

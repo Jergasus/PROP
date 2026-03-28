@@ -1,4 +1,4 @@
-package test.drivers;
+package controller;
 
 import model.board.Board;
 
