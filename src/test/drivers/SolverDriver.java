@@ -1,7 +1,7 @@
 package test.drivers;
 
 import controller.DomainController;
-import controller.HidatoCase;
+import controller.HidatoCaseController;
 import model.board.Board;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class SolverDriver {
     // ------------------------------------------------------------------ //
 
     private static void handleFlow(boolean solve) {
-        List<HidatoCase> catalog = domain.getCatalog();
+        List<HidatoCaseController> catalog = domain.getCatalog();
         printCatalog(catalog);
 
         System.out.print("Select case (0 to go back): ");
@@ -62,7 +62,7 @@ public class SolverDriver {
         if (idx == 0) return;
 
         System.out.println();
-        HidatoCase tc = domain.getCase(idx - 1);
+        HidatoCaseController tc = domain.getCase(idx - 1);
 
         if (solve) runSolve(tc);
         else       runValidate(tc);
@@ -73,7 +73,7 @@ public class SolverDriver {
 
     // ── VALIDATE ────────────────────────────────────────────────────────
 
-    private static void runValidate(HidatoCase tc) {
+    private static void runValidate(HidatoCaseController tc) {
         Board board = tc.getBoard();
         printSectionHeader("VALIDATE  —  " + tc.getName());
 
@@ -93,7 +93,7 @@ public class SolverDriver {
 
     // ── SOLVE ────────────────────────────────────────────────────────────
 
-    private static void runSolve(HidatoCase tc) {
+    private static void runSolve(HidatoCaseController tc) {
         Board board = tc.getBoard();
         printSectionHeader("SOLVE  —  " + tc.getName());
 
@@ -146,12 +146,12 @@ public class SolverDriver {
         System.out.print("> ");
     }
 
-    private static void printCatalog(List<HidatoCase> catalog) {
+    private static void printCatalog(List<HidatoCaseController> catalog) {
         System.out.println();
         System.out.println("  Available test cases:");
         System.out.println();
         for (int i = 0; i < catalog.size(); i++) {
-            HidatoCase tc = catalog.get(i);
+            HidatoCaseController tc = catalog.get(i);
             String outcome = tc.isExpectedSolvable() ? "SOLVABLE" : "UNSOLVABLE";
             System.out.printf("  [%d] %s  (%s)%n", i + 1, tc.getName(), outcome);
             System.out.printf("      Adjacency: %s%n", tc.getAdjacencyDesc());
@@ -166,7 +166,7 @@ public class SolverDriver {
         System.out.println("----------------------------------------------");
     }
 
-    private static void printExpected(HidatoCase tc) {
+    private static void printExpected(HidatoCaseController tc) {
         System.out.println("  Expected: " + (tc.isExpectedSolvable() ? "SOLVABLE" : "UNSOLVABLE"));
         System.out.println("  " + tc.getDescription());
     }

@@ -1,14 +1,13 @@
 package controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import model.adjacency.*;
 import model.algorithms.Solver;
 import model.algorithms.Validator;
 import model.board.Board;
 import model.cell.CellShape;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Mediator between the driver (UI) and the domain layer (Solver, Validator).
@@ -28,9 +27,9 @@ import java.util.List;
  */
 public class DomainController {
 
-    private final Solver    solver    = new Solver();
+    private final Solver solver = new Solver();
     private final Validator validator = new Validator();
-    private final List<HidatoCase> catalog;
+    private final List<HidatoCaseController> catalog;
 
     public DomainController() {
         catalog = buildCatalog();
@@ -40,11 +39,11 @@ public class DomainController {
     //  Public API — called only by the driver                             //
     // ------------------------------------------------------------------ //
 
-    public List<HidatoCase> getCatalog() {
+    public List<HidatoCaseController> getCatalog() {
         return Collections.unmodifiableList(catalog);
     }
 
-    public HidatoCase getCase(int index) {
+    public HidatoCaseController getCase(int index) {
         return catalog.get(index);
     }
 
@@ -72,8 +71,8 @@ public class DomainController {
     //  Predefined catalog                                                 //
     // ------------------------------------------------------------------ //
 
-    private List<HidatoCase> buildCatalog() {
-        List<HidatoCase> list = new ArrayList<>();
+    private List<HidatoCaseController> buildCatalog() {
+        List<HidatoCaseController> list = new ArrayList<>();
 
         // ── SOLVABLE ────────────────────────────────────────────────────
 
@@ -200,7 +199,7 @@ public class DomainController {
     //  Board parsing (PDF format → Board)                                 //
     // ------------------------------------------------------------------ //
 
-    private HidatoCase parse(String name, String adjDesc, boolean solvable,
+    private HidatoCaseController parse(String name, String adjDesc, boolean solvable,
                              String description, String[] lines) {
         String[] header = lines[0].split(",");
         String typeCode = header[0].trim();
@@ -245,6 +244,6 @@ public class DomainController {
             }
         }
 
-        return new HidatoCase(name, adjDesc, solvable, description, board);
+        return new HidatoCaseController(name, adjDesc, solvable, description, board);
     }
 }

@@ -3,7 +3,7 @@ package controller;
 import model.board.Board;
 
 /** Immutable descriptor for a predefined Hidato puzzle in the demo catalog. */
-public class HidatoCase {
+public class HidatoCaseController {
 
     private final String name;
     private final String adjacencyDesc;
@@ -11,8 +11,8 @@ public class HidatoCase {
     private final String description;
     private final Board board;   // canonical copy — never exposed directly
 
-    public HidatoCase(String name, String adjacencyDesc, boolean expectedSolvable,
-                      String description, Board board) {
+    public HidatoCaseController(String name, String adjacencyDesc, boolean expectedSolvable,
+                                String description, Board board) {
         this.name             = name;
         this.adjacencyDesc    = adjacencyDesc;
         this.expectedSolvable = expectedSolvable;

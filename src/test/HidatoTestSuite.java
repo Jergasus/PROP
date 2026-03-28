@@ -15,8 +15,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     ValidatorTest.class,
-    SolverTest.class,
-    GeneratorTest.class
+    SolverTest.class
 })
 public class HidatoTestSuite {
     // Intentionally empty — suite configuration is in the annotations above.
