@@ -1,0 +1,8 @@
+FILL_COGNOM, FILL_NOM
+FILL_COGNOM2, FILL_NOM2
+FILL_COGNOM3, FILL_NOM3
+FILL_COGNOM4, FILL_NOM4
+nom1.cognom1@estudiantat.upc.edu
+nom2.cognom2@estudiantat.upc.edu
+nom3.cognom3@estudiantat.upc.edu
+nom4.cognom4@estudiantat.upc.edu

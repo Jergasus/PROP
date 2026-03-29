@@ -1,0 +1,21 @@
+EXE/DriverHidato - Interactive driver for Solver and Validator
+==============================================================
+
+SolverValidatorDriver.java - Interactive console driver. Presentation layer only;
+                             all domain access goes through DomainController.
+descripcio.txt             - Detailed description of the driver and its flows.
+hidatos/                   - Predefined Hidato puzzle files in PDF format.
+
+Hidato test files (hidatos/):
+  01_square_4way_3x3.txt               - Square 4-way, solvable
+  02_square_8way_3x4_pdf.txt           - Square 8-way, solvable (PDF example)
+  03_square_8way_5x5_diamond_pdf.txt   - Square 8-way diamond, solvable (PDF example)
+  04_hexagon_4x3_pdf.txt               - Hexagonal, solvable (PDF example)
+  05_triangle_4x4.txt                  - Triangle, solvable
+  06_square_4way_unsolvable.txt        - Square 4-way, unsolvable
+  07_square_8way_unsolvable.txt        - Square 8-way, unsolvable
+  08_triangle_unsolvable.txt           - Triangle, unsolvable
+
+Run (from FONTS/):
+  ./compilar.sh        (Mac/Linux)
+  compilar.bat         (Windows)

@@ -1,0 +1,8 @@
+Lliurament 1 - Hidato (PROP 2Q 25-26)
+======================================
+
+equip.txt    - Team members and contact information
+index.txt    - This file
+DOCS/        - Documentation (PDF documents, diagrams)
+FONTS/       - Source code, build scripts
+EXE/         - Test suites and interactive driver

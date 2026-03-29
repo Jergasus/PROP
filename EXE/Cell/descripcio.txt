@@ -1,0 +1,30 @@
+TEST SUITE: Cell
+================
+Classes tested: model.cell.Cell
+
+Tests included in CellTest.java:
+  - newCell_isEmpty                    : new cell starts with value 0, not fixed, not void
+  - setValue_updatesValue              : setValue() sets the cell value correctly
+  - setFixedValue_marksFixed           : setFixedValue() sets value and marks cell as fixed
+  - setValue_doesNotOverwriteFixed     : setValue() is ignored on a fixed cell
+  - setVoid_clearsValueAndFixed        : setVoid(true) resets value and fixed flag
+  - setVoid_false_restoresPlayable     : setVoid(false) makes the cell playable again
+  - setValue_doesNotWorkOnVoid         : setValue() is ignored on a void cell
+  - setAsEmpty_resetsCell              : setAsEmpty() resets value, fixed, and void flags
+  - isEmpty_falseWhenHasValue          : isEmpty() returns false when value != 0
+  - isEmpty_falseWhenVoid              : isEmpty() returns false for void cells
+  - getPosition_returnsCorrectPosition : getPosition() returns the correct (row, col)
+  - getShape_returnsCorrectShape       : getShape() returns the correct CellShape
+  - copyConstructor_deepCopiesState    : copy constructor copies all fields; mutation is independent
+  - toString_voidCell                  : void cell displays as " # "
+  - toString_emptySquareCell           : empty square cell displays as " . "
+  - toString_squareCellWithValue       : square cell with value displays right-aligned number
+  - toString_triangleEmptyPointingUp   : triangle cell (row+col even) displays " ^ "
+  - toString_triangleEmptyPointingDown : triangle cell (row+col odd) displays " v "
+
+Source file (in FONTS):
+  src/test/CellTest.java
+
+Compilation (from FONTS/):
+  javac -cp "../lib/*" -d out $(find src -name "*.java")
+  java  -cp "out:../lib/*" org.junit.runner.JUnitCore test.CellTest

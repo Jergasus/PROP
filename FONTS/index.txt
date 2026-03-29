@@ -1,0 +1,29 @@
+FONTS - Source code for delivery 1
+===================================
+
+compilar.sh  - Compile and run script (Mac/Linux). Run from this directory.
+compilar.bat - Compile and run script (Windows). Run from this directory.
+src/         - Java source files organized by package
+
+Package structure:
+  Main.java                              - Entry point
+  controller/DomainController.java       - Mediator between driver and domain
+  controller/HidatoCaseController.java   - Immutable puzzle catalog entry
+  model/adjacency/AdjacencyStrategy.java - Strategy interface for cell adjacency
+  model/adjacency/SquareAdjacencyStrategy.java      - 4-way square adjacency
+  model/adjacency/SquareFullAdjacencyStrategy.java  - 8-way square adjacency
+  model/adjacency/HexagonalAdjacencyStrategy.java   - Hexagonal adjacency
+  model/adjacency/TriangleAdjacencyStrategy.java    - Triangle adjacency
+  model/algorithms/Solver.java           - Backtracking solver with Warnsdorff heuristic
+  model/algorithms/Validator.java        - Full and partial board validation
+  model/board/Board.java                 - Grid with cell matrix and adjacency strategy
+  model/cell/Cell.java                   - Single cell (value, fixed, void flags)
+  model/cell/CellShape.java              - Enum: SQUARE, HEXAGON, TRIANGLE
+  model/cell/Position.java               - Immutable (row, col) coordinate record
+  stubs/StubGestorDades.java             - Stub for data persistence layer
+  test/CellTest.java                     - JUnit tests for Cell (18 tests)
+  test/BoardTest.java                    - JUnit tests for Board (19 tests)
+  test/ValidatorTest.java                - JUnit tests for Validator (14 tests)
+  test/SolverTest.java                   - JUnit tests for Solver (18 tests)
+  test/HidatoTestSuite.java              - JUnit suite runner (69 tests total)
+  test/drivers/SolverValidatorDriver.java - Interactive console driver

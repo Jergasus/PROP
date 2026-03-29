@@ -1,22 +1,20 @@
-EXE — Executables and Test Suites
-===================================
+EXE - Executables and Test Suites
+==================================
+
 This directory contains all runnable test suites and the interactive driver.
-Each subdirectory includes a descripcio.txt explaining its contents.
+Each subdirectory includes a descripcio.txt and an index.txt.
 
 Subdirectories:
-  Solver/        JUnit tests for model.algorithms.Solver + Validator
-                 Source: src/test/SolverTest.java (18 tests)
+  Cell/          JUnit tests for model.cell.Cell (18 tests)
+  Board/         JUnit tests for model.board.Board (19 tests)
+  Solver/        JUnit tests for model.algorithms.Solver (18 tests)
+  Validator/     JUnit tests for model.algorithms.Validator (14 tests)
+  DriverHidato/  Interactive Solver and Validator driver
 
-  Validator/     JUnit tests for model.algorithms.Validator
-                 Source: src/test/ValidatorTest.java (14 tests)
+To run all JUnit tests (from FONTS/):
+  javac -cp "../lib/*" -d out $(find src -name "*.java")
+  java  -cp "out:../lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
 
-  DriverHidato/  Interactive driver (SolverValidatorDriver)
-                 Predefined Hidato puzzles in hidatos/
-
-To run all JUnit tests at once (from project root):
-  javac -cp "lib/*" -d out $(find src -name "*.java")
-  java  -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
-
-To launch the interactive driver:
+To launch the interactive driver (from FONTS/):
   ./compilar.sh        (Mac/Linux)
   compilar.bat         (Windows)

@@ -1,0 +1,6 @@
+EXE/Board - JUnit tests for model.board.Board
+=============================================
+
+BoardTest.java   - JUnit 4 test class. 19 tests covering dimensions, neighbors,
+                   adjacency, copy constructor, pruning, and connectivity.
+descripcio.txt   - Detailed description of the test suite.

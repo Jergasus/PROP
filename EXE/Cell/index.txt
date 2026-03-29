@@ -1,0 +1,6 @@
+EXE/Cell - JUnit tests for model.cell.Cell
+==========================================
+
+CellTest.java    - JUnit 4 test class. 18 tests covering cell state,
+                   fixed/void flags, copy constructor, and toString output.
+descripcio.txt   - Detailed description of the test suite.

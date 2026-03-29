@@ -1,0 +1,31 @@
+TEST SUITE: Board
+=================
+Classes tested: model.board.Board
+
+Tests included in BoardTest.java:
+  - dimensions_areCorrect              : getRows() and getCols() return correct values
+  - getCell_returnsCell                : getCell(r,c) returns non-null for valid positions
+  - getCell_outOfBounds_returnsNull    : getCell() returns null for out-of-bounds positions
+  - getCellCount_allPlayable           : getCellCount() equals rows*cols when no voids
+  - getCellCount_withVoids             : getCellCount() excludes void cells
+  - getNeighbors_4way_centerCell       : center cell has 4 neighbors in 4-way square board
+  - getNeighbors_4way_cornerCell       : corner cell has 2 neighbors in 4-way square board
+  - getNeighbors_excludesVoidCells     : void cells are not returned as neighbors
+  - areAdjacent_4way_orthogonal        : orthogonal pairs are adjacent in 4-way mode
+  - areAdjacent_4way_diagonal_false    : diagonal pairs are NOT adjacent in 4-way mode
+  - areAdjacent_8way_diagonalAllowed   : diagonal pairs ARE adjacent in 8-way mode
+  - copyConstructor_isDeepCopy         : copy constructor produces independent board
+  - pruneDeadEnds_removesCorners       : after pruning, no cell has fewer than 2 neighbors
+  - isConnected_fullBoard              : full board is connected
+  - isConnected_afterVoidSplitsBoard   : voiding a column disconnects the board
+  - isConnected_singleCell             : 1x1 board is connected
+  - getCellShape_returnsCorrectShape   : getCellShape() returns the shape set at construction
+  - getNeighbors_hexBoard_evenRow      : hex board even-row cell has neighbors
+  - getNeighbors_triangleBoard         : every triangle cell has at least one neighbor
+
+Source file (in FONTS):
+  src/test/BoardTest.java
+
+Compilation (from FONTS/):
+  javac -cp "../lib/*" -d out $(find src -name "*.java")
+  java  -cp "out:../lib/*" org.junit.runner.JUnitCore test.BoardTest

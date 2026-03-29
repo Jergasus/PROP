@@ -1,0 +1,6 @@
+EXE/Solver - JUnit tests for model.algorithms.Solver
+=====================================================
+
+SolverTest.java  - JUnit 4 test class. 18 tests covering backtracking solver,
+                   solution counting, all board geometries, and edge cases.
+descripcio.txt   - Detailed description of the test suite.

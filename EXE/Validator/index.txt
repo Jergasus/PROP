@@ -1,0 +1,6 @@
+EXE/Validator - JUnit tests for model.algorithms.Validator
+===========================================================
+
+ValidatorTest.java - JUnit 4 test class. 14 tests covering full solution
+                     validation, partial validation, and edge cases.
+descripcio.txt     - Detailed description of the test suite.

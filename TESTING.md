@@ -5,6 +5,8 @@
 - Java 17+ installed
 - You are on the `delivery1` branch: `git checkout delivery1`
 
+All commands must be run from inside the `FONTS/` directory.
+
 ---
 
 ## macOS / Linux (bash)
@@ -12,25 +14,26 @@
 ### 1. Compile
 
 ```bash
-find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt
+cd FONTS
+find src -name "*.java" > /tmp/hidato_sources.txt && javac -cp "../lib/*" -d out @/tmp/hidato_sources.txt
 ```
 
-### 2. Run JUnit test suite (32 tests)
+### 2. Run JUnit test suite (69 tests)
 
 ```bash
-java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+java -cp "out:../lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
 ```
 
 ### 3. Interactive driver
 
 ```bash
-java -cp "out:lib/*" Main
+java -cp "out:../lib/*" Main
 ```
 
-### 4. Quick one-liner (compile + test)
+### 4. Quick one-liner (compile + run driver)
 
 ```bash
-find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt && java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+./compilar.sh
 ```
 
 ---
@@ -40,26 +43,27 @@ find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt &
 ### 1. Compile
 
 ```powershell
-Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty FullName | Out-File sources.txt -Encoding utf8
-javac -cp "lib/*" -d out "@sources.txt"
+cd FONTS
+Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty FullName | Out-File $env:TEMP\hidato_sources.txt -Encoding utf8
+javac -cp "..\lib\*" -d out "@$env:TEMP\hidato_sources.txt"
 ```
 
-### 2. Run JUnit test suite (32 tests)
+### 2. Run JUnit test suite (69 tests)
 
 ```powershell
-java -cp "out;lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+java -cp "out;..\lib\*" org.junit.runner.JUnitCore test.HidatoTestSuite
 ```
 
 ### 3. Interactive driver
 
 ```powershell
-java -cp "out;lib/*" Main
+java -cp "out;..\lib\*" Main
 ```
 
-### 4. Quick one-liner (compile + test)
+### 4. Quick one-liner (compile + run driver)
 
 ```powershell
-Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty FullName | Out-File sources.txt -Encoding utf8; javac -cp "lib/*" -d out "@sources.txt"; java -cp "out;lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
+compilar.bat
 ```
 
 ---
@@ -68,7 +72,9 @@ Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty Full
 
 | Test class | Tests | What it validates |
 |---|---|---|
+| `CellTest`      | 18 | Cell state, fixed/void flags, copy constructor, toString |
+| `BoardTest`     | 19 | Grid dimensions, neighbors, adjacency, copy, connectivity |
 | `ValidatorTest` | 14 | Valid/invalid solutions, partial validation, edge cases |
-| `SolverTest` | 18 | Backtracking solver, unique/multiple solutions, all geometries |
+| `SolverTest`    | 18 | Backtracking solver, unique/multiple solutions, all geometries |
 
-Expected output: `OK (32 tests)`
+Expected output: `OK (69 tests)`

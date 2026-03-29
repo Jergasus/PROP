@@ -62,7 +62,7 @@ public class DomainController {
         return solver.solve(activeBoard);
     }
 
-    private static final String HIDATOS_DIR = "EXE/DriverHidato/hidatos";
+    private static final String HIDATOS_DIR = "../EXE/DriverHidato/hidatos";
 
     private List<HidatoCaseController> buildCatalog() {
         List<HidatoCaseController> list = new ArrayList<>();
