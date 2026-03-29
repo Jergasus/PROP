@@ -4,14 +4,14 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import model.adjacency.HexagonalAdjacencyStrategy;
-import model.adjacency.SquareAdjacencyStrategy;
-import model.adjacency.SquareFullAdjacencyStrategy;
-import model.adjacency.TriangleAdjacencyStrategy;
-import model.algorithms.Solver;
-import model.algorithms.Validator;
-import model.board.Board;
-import model.cell.CellShape;
+import domini.model.adjacency.HexagonalAdjacencyStrategy;
+import domini.model.adjacency.SquareAdjacencyStrategy;
+import domini.model.adjacency.SquareFullAdjacencyStrategy;
+import domini.model.adjacency.TriangleAdjacencyStrategy;
+import domini.algorithms.Solver;
+import domini.algorithms.Validator;
+import domini.model.board.Board;
+import domini.model.cell.CellShape;
 
 public class SolverTest {
 

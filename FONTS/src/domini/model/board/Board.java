@@ -1,4 +1,4 @@
-package model.board;
+package domini.model.board;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
-import model.adjacency.AdjacencyStrategy;
-import model.cell.Cell;
-import model.cell.CellShape;
-import model.cell.Position;
+import domini.model.adjacency.AdjacencyStrategy;
+import domini.model.cell.Cell;
+import domini.model.cell.CellShape;
+import domini.model.cell.Position;
 
 public class Board implements Serializable {
     private final int rows;

@@ -1,4 +1,4 @@
-package model.cell;
+package domini.model.cell;
 
 import java.io.Serializable;
 

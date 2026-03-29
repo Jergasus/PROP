@@ -1,11 +1,11 @@
-package model.algorithms;
+package domini.algorithms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import model.board.Board;
-import model.cell.Cell;
+import domini.model.board.Board;
+import domini.model.cell.Cell;
 
 public class Solver {
 

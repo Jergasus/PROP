@@ -1,7 +1,7 @@
-package model.algorithms;
+package domini.algorithms;
 
-import model.board.Board;
-import model.cell.Cell;
+import domini.model.board.Board;
+import domini.model.cell.Cell;
 
 public class Validator {
 

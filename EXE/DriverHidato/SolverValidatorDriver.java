@@ -1,12 +1,12 @@
 package test.drivers;
 
-import controller.DomainController;
+import domini.controller.CtrlDomini;
 import java.util.Scanner;
 
 public class SolverValidatorDriver {
 
     private static final Scanner sc = new Scanner(System.in);
-    private static final DomainController domain = new DomainController();
+    private static final CtrlDomini domain = new CtrlDomini();
 
     public static void main(String[] args) {
         printBanner();

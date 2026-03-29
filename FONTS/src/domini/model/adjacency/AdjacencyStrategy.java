@@ -1,6 +1,6 @@
-package model.adjacency;
+package domini.model.adjacency;
 
-import model.cell.Position;
+import domini.model.cell.Position;
 import java.util.List;
 import java.io.Serializable;
 

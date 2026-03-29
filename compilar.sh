@@ -4,6 +4,7 @@
 set -e
 
 mkdir -p out
-find src -name "*.java" > /tmp/hidato_sources.txt
-javac -cp "lib/*" -d out @/tmp/hidato_sources.txt
-java  -cp "out:lib/*" Main
+find FONTS/src -name "*.java" > hidato_sources.txt
+find EXE -name "*.java" >> hidato_sources.txt
+javac -cp "lib/*" -d out @hidato_sources.txt
+java  -cp "out;lib/*" test.drivers.SolverValidatorDriver
