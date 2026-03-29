@@ -1,4 +1,4 @@
-Square 8-way  ·  Trapped endpoint  [UNSOLVABLE]
+Square 8-way  ·  Trapped endpoint
 Square — sides + diagonals
 UNSOLVABLE
 Void barriers isolate clue 3 at (0,2). After the forced move 1->2->3, cell (0,2) has no free neighbours — the path cannot continue.
