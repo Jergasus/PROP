@@ -28,26 +28,21 @@ public class Board implements Serializable {
         initializeGrid();
     }
 
-    // Constructor de copia
     public Board(Board other) {
         this.rows = other.rows;
         this.cols = other.cols;
         this.cellShape = other.cellShape;
-        this.adjacencyStrategy = other.adjacencyStrategy; // Strategy is stateless usually, sharing reference equals sharing logic
+        this.adjacencyStrategy = other.adjacencyStrategy;
         this.grid = new Cell[rows][cols];
-        for(int i=0; i<rows; i++) {
-            for(int j=0; j<cols; j++) {
-                grid[i][j] = new Cell(other.grid[i][j]); // Deep copy cells
-            }
-        }
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                grid[i][j] = new Cell(other.grid[i][j]);
     }
 
     private void initializeGrid() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
                 grid[i][j] = new Cell(new Position(i, j), cellShape);
-            }
-        }
     }
 
     public void setAdjacencyStrategy(AdjacencyStrategy strategy) {
@@ -66,11 +61,8 @@ public class Board implements Serializable {
     public List<Cell> getNeighbors(Position pos) {
         List<Position> neighborPositions = adjacencyStrategy.getNeighbors(pos, rows, cols);
         List<Cell> neighbors = new ArrayList<>();
-        
         for (Position p : neighborPositions) {
             Cell cell = getCell(p);
-            // Solo devolvemos celdas que existen y no son huecos "Void"
-            // (El algoritmo podría necesitar saber si es Void, pero para moverse, no sirve)
             if (cell != null && !cell.isVoid()) {
                 neighbors.add(cell);
             }
@@ -83,11 +75,6 @@ public class Board implements Serializable {
                pos.col() >= 0 && pos.col() < cols;
     }
 
-    /**
-     * Returns true if p1 and p2 are adjacent according to the current strategy.
-     * Delegates to AdjacencyStrategy.areAdjacent() which may be O(1) for simple
-     * geometries (Square, SquareFull) or O(k) for Hex/Triangle via the default.
-     */
     public boolean areAdjacent(Position p1, Position p2) {
         return adjacencyStrategy.areAdjacent(p1, p2, rows, cols);
     }
@@ -95,7 +82,6 @@ public class Board implements Serializable {
     public int getRows() { return rows; }
     public int getCols() { return cols; }
 
-    /** Returns the number of non-void (playable) cells on the board. */
     public int getCellCount() {
         int count = 0;
         for (int i = 0; i < rows; i++)
@@ -104,13 +90,9 @@ public class Board implements Serializable {
         return count;
     }
 
-    public CellShape getCellShape() {
-        return cellShape;
-    }
+    public CellShape getCellShape() { return cellShape; }
 
-    public AdjacencyStrategy getAdjacencyStrategy() {
-        return adjacencyStrategy;
-    }
+    public AdjacencyStrategy getAdjacencyStrategy() { return adjacencyStrategy; }
 
     public String getAdjacencyStrategyName() {
         return adjacencyStrategy.getClass().getSimpleName()
@@ -121,14 +103,7 @@ public class Board implements Serializable {
             .replace("Triangle", "Triangular");
     }
 
-    /**
-     * Iteratively marks degree-1 cells as void until no dead-ends remain.
-     * A dead-end is a non-void cell with fewer than 2 non-void neighbors.
-     * This is essential for triangle/hex grids where corners may have
-     * only 1 neighbor, making Hamiltonian paths impossible.
-     *
-     * @return the number of cells that were voided
-     */
+    // Iteratively voids cells with fewer than 2 non-void neighbors until stable.
     public int pruneDeadEnds() {
         int totalPruned = 0;
         boolean changed = true;
@@ -138,8 +113,7 @@ public class Board implements Serializable {
                 for (int j = 0; j < cols; j++) {
                     Cell cell = grid[i][j];
                     if (cell.isVoid()) continue;
-                    int neighborCount = getNeighbors(cell.getPosition()).size();
-                    if (neighborCount < 2) {
+                    if (getNeighbors(cell.getPosition()).size() < 2) {
                         cell.setVoid(true);
                         totalPruned++;
                         changed = true;
@@ -150,24 +124,14 @@ public class Board implements Serializable {
         return totalPruned;
     }
 
-    /**
-     * Randomly places numVoids void cells while keeping all remaining
-     * non-void cells connected.
-     *
-     * @return true if all voids were placed successfully
-     */
     public boolean placeRandomVoids(int numVoids, Random random) {
         if (numVoids <= 0) return true;
         if (numVoids >= getCellCount() - 1) return false;
 
         List<Position> candidates = new ArrayList<>();
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (!grid[i][j].isVoid()) {
-                    candidates.add(new Position(i, j));
-                }
-            }
-        }
+        for (int i = 0; i < rows; i++)
+            for (int j = 0; j < cols; j++)
+                if (!grid[i][j].isVoid()) candidates.add(new Position(i, j));
         Collections.shuffle(candidates, random);
 
         int placed = 0;
@@ -178,30 +142,19 @@ public class Board implements Serializable {
             if (isConnected()) {
                 placed++;
             } else {
-                cell.setVoid(false); // restore — would disconnect the board
+                cell.setVoid(false);
             }
         }
         return placed == numVoids;
     }
 
-    /**
-     * Checks whether all non-void cells form a single connected component
-     * using BFS through the adjacency strategy.
-     */
     public boolean isConnected() {
-        // Find first non-void cell
         Position start = null;
-        int totalNonVoid = 0;
-        for (int i = 0; i < rows && start == null; i++) {
-            for (int j = 0; j < cols && start == null; j++) {
-                if (!grid[i][j].isVoid()) {
-                    start = new Position(i, j);
-                }
-            }
-        }
-        if (start == null) return true; // all void is trivially connected
+        for (int i = 0; i < rows && start == null; i++)
+            for (int j = 0; j < cols && start == null; j++)
+                if (!grid[i][j].isVoid()) start = new Position(i, j);
+        if (start == null) return true;
 
-        // BFS
         boolean[][] visited = new boolean[rows][cols];
         Queue<Position> queue = new LinkedList<>();
         queue.add(start);
@@ -219,7 +172,6 @@ public class Board implements Serializable {
                 }
             }
         }
-
         return reachable == getCellCount();
     }
 
@@ -227,13 +179,8 @@ public class Board implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rows; i++) {
-            // Hex boards: indent odd rows to show offset visually
-            if (cellShape == CellShape.HEXAGON && i % 2 != 0) {
-                sb.append("  ");
-            }
-            for (int j = 0; j < cols; j++) {
-                sb.append(grid[i][j].toString());
-            }
+            if (cellShape == CellShape.HEXAGON && i % 2 != 0) sb.append("  ");
+            for (int j = 0; j < cols; j++) sb.append(grid[i][j].toString());
             sb.append("\n");
         }
         return sb.toString();

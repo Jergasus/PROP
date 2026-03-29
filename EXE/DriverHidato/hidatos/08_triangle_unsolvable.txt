@@ -1,0 +1,8 @@
+Triangle sides  ·  Barrier splits 1 and 2  [UNSOLVABLE]
+Triangle — sides only
+UNSOLVABLE
+Clues 1 (col 0) and 2 (col 4) are separated by a full void barrier in row 0. They cannot be adjacent, making the puzzle unsolvable.
+T,C,3,5
+1,#,#,#,2
+?,?,?,?,?
+#,#,#,#,#

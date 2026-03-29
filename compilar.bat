@@ -11,4 +11,4 @@ if errorlevel 1 (
     exit /b 1
 )
 
-java -cp "out;lib\*" test.drivers.SolverValidatorDriver
+java -cp "out;lib\*" Main

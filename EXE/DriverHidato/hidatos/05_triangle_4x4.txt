@@ -1,0 +1,9 @@
+Triangle sides  ·  4×4 pruned corners
+Triangle — sides only
+SOLVABLE
+4×4 triangular grid. Corner cells (0,3) and (3,3) have only one neighbour and are pre-voided. Value 1 placed at top-left.
+T,C,4,4
+1,?,?,#
+?,?,?,?
+?,?,?,?
+?,?,?,#

@@ -1,23 +1,8 @@
 package test.drivers;
 
 import controller.DomainController;
-import controller.HidatoCaseController;
-import java.util.List;
 import java.util.Scanner;
-import model.board.Board;
 
-/**
- * Interactive demo driver for Solver and Validator.
- *
- * All domain calls go through DomainController — this class handles
- * only console I/O and menu navigation.
- *
- * Usage:
- *   ./compilar.sh
- *   — or —
- *   javac -cp "lib/*" -d out $(find src -name "*.java")
- *   java  -cp "out:lib/*" test.drivers.SolverDriver
- */
 public class SolverValidatorDriver {
 
     private static final Scanner sc = new Scanner(System.in);
@@ -32,15 +17,9 @@ public class SolverValidatorDriver {
             int choice = readInt(0, 2);
 
             switch (choice) {
-                case 0:
-                    running = false;
-                    break;
-                case 1:
-                    handleFlow(false); // validate
-                    break;
-                case 2:
-                    handleFlow(true);  // solve
-                    break;
+                case 0: running = false;       break;
+                case 1: handleFlow(false);     break;
+                case 2: handleFlow(true);      break;
             }
         }
 
@@ -48,75 +27,59 @@ public class SolverValidatorDriver {
         sc.close();
     }
 
-    // ------------------------------------------------------------------ //
-    //  High-level flows                                                   //
-    // ------------------------------------------------------------------ //
-
     private static void handleFlow(boolean solve) {
-        List<HidatoCaseController> catalog = domain.getCatalog();
-        printCatalog(catalog);
+        printCatalog();
 
         System.out.print("Select case (0 to go back): ");
-        int idx = readInt(0, catalog.size());
+        int idx = readInt(0, domain.getCatalogSize());
         if (idx == 0) return;
 
+        domain.selectCase(idx - 1);
         System.out.println();
-        HidatoCaseController tc = domain.getCase(idx - 1);
 
-        if (solve) runSolve(tc);
-        else       runValidate(tc);
+        if (solve) runSolve(idx - 1);
+        else       runValidate(idx - 1);
 
         System.out.println("\nPress ENTER to continue...");
         sc.nextLine();
     }
 
-    // ── VALIDATE ────────────────────────────────────────────────────────
+    private static void runValidate(int idx) {
+        printSectionHeader("VALIDATE  —  " + domain.getCatalogCaseName(idx));
 
-    private static void runValidate(HidatoCaseController tc) {
-        Board board = tc.getBoard();
-        printSectionHeader("VALIDATE  —  " + tc.getName());
-
-        System.out.print(board);
+        System.out.print(domain.getActiveBoardAsString());
         System.out.println();
 
-        boolean partial = domain.isPartiallyValid(board);
+        boolean partial = domain.isPartiallyValid();
         System.out.println("  Partial validity : " + (partial ? "CONSISTENT  ✓" : "CONTRADICTIONS FOUND  ✗"));
 
-        Board copy = tc.getBoard();
-        boolean hasSolution = partial && domain.solve(copy);
+        boolean hasSolution = partial && domain.hasSolution();
         System.out.println("  Has solution     : " + (hasSolution ? "YES  ✓" : "NO  ✗"));
     }
 
-    // ── SOLVE ────────────────────────────────────────────────────────────
+    private static void runSolve(int idx) {
+        printSectionHeader("SOLVE  —  " + domain.getCatalogCaseName(idx));
 
-    private static void runSolve(HidatoCaseController tc) {
-        Board board = tc.getBoard();
-        printSectionHeader("SOLVE  —  " + tc.getName());
-
-        System.out.print(board);
+        System.out.print(domain.getActiveBoardAsString());
         System.out.println();
 
-        if (!domain.isPartiallyValid(board)) {
+        if (!domain.isPartiallyValid()) {
             System.out.println("  Contradictions found — solving aborted.");
             return;
         }
 
         long    t0      = System.currentTimeMillis();
-        boolean solved  = domain.solve(board);
+        boolean solved  = domain.solve();
         long    elapsed = System.currentTimeMillis() - t0;
 
         if (solved) {
             System.out.println("  Solution (" + elapsed + " ms):\n");
-            System.out.print(board);
-            System.out.println("\n  Validator: " + (domain.isValidSolution(board) ? "VALID  ✓" : "INVALID  ✗"));
+            System.out.print(domain.getActiveBoardAsString());
+            System.out.println("\n  Validator: " + (domain.isValidSolution() ? "VALID  ✓" : "INVALID  ✗"));
         } else {
             System.out.println("  No solution found (" + elapsed + " ms).");
         }
     }
-
-    // ------------------------------------------------------------------ //
-    //  Display helpers                                                    //
-    // ------------------------------------------------------------------ //
 
     private static void printBanner() {
         System.out.println("==============================================");
@@ -132,16 +95,15 @@ public class SolverValidatorDriver {
         System.out.print("> ");
     }
 
-    private static void printCatalog(List<HidatoCaseController> catalog) {
+    private static void printCatalog() {
         System.out.println();
         System.out.println("  Available test cases:");
         System.out.println();
-        for (int i = 0; i < catalog.size(); i++) {
-            HidatoCaseController tc = catalog.get(i);
-            String outcome = tc.isExpectedSolvable() ? "SOLVABLE" : "UNSOLVABLE";
-            System.out.printf("  [%d] %s  (%s)%n", i + 1, tc.getName(), outcome);
-            System.out.printf("      Adjacency: %s%n", tc.getAdjacencyDesc());
-            System.out.printf("      %s%n", tc.getDescription());
+        for (int i = 0; i < domain.getCatalogSize(); i++) {
+            String outcome = domain.getCatalogCaseSolvable(i) ? "SOLVABLE" : "UNSOLVABLE";
+            System.out.printf("  [%d] %s  (%s)%n", i + 1, domain.getCatalogCaseName(i), outcome);
+            System.out.printf("      Adjacency : %s%n", domain.getCatalogCaseAdjacency(i));
+            System.out.printf("      Description: %s%n", domain.getCatalogCaseDescription(i));
             System.out.println();
         }
     }
@@ -151,11 +113,6 @@ public class SolverValidatorDriver {
         System.out.println("  " + title);
         System.out.println("----------------------------------------------");
     }
-
-
-    // ------------------------------------------------------------------ //
-    //  Input helper                                                       //
-    // ------------------------------------------------------------------ //
 
     private static int readInt(int min, int max) {
         while (true) {

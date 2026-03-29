@@ -15,17 +15,16 @@
 find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt
 ```
 
-### 2. Run JUnit test suite (40 tests)
+### 2. Run JUnit test suite (28 tests)
 
 ```bash
 java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
 ```
 
-### 3. Interactive drivers
+### 3. Interactive driver
 
 ```bash
-java -cp out test.drivers.SolverDriver
-java -cp out test.drivers.GeneratorDriver
+java -cp "out:lib/*" Main
 ```
 
 ### 4. Quick one-liner (compile + test)
@@ -45,17 +44,16 @@ Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty Full
 javac -cp "lib/*" -d out "@sources.txt"
 ```
 
-### 2. Run JUnit test suite (40 tests)
+### 2. Run JUnit test suite (28 tests)
 
 ```powershell
 java -cp "out;lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
 ```
 
-### 3. Interactive drivers
+### 3. Interactive driver
 
 ```powershell
-java -cp "out;lib/*" test.drivers.SolverDriver
-java -cp "out;lib/*" test.drivers.GeneratorDriver
+java -cp "out;lib/*" Main
 ```
 
 ### 4. Quick one-liner (compile + test)
@@ -70,8 +68,7 @@ Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty Full
 
 | Test class | Tests | What it validates |
 |---|---|---|
-| `ValidatorTest` | 16 | Valid/invalid solutions, partial validation, edge cases |
+| `ValidatorTest` | 14 | Valid/invalid solutions, partial validation, edge cases |
 | `SolverTest` | 14 | Backtracking solver, unique/multiple solutions, all geometries |
-| `GeneratorTest` | 10 | Puzzle generation, unique solutions, difficulty levels |
 
-Expected output: `OK (40 tests)`
+Expected output: `OK (28 tests)`

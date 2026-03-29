@@ -1,206 +1,111 @@
 package controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import model.adjacency.*;
 import model.algorithms.Solver;
 import model.algorithms.Validator;
 import model.board.Board;
 import model.cell.CellShape;
 
-/**
- * Mediator between the driver (UI) and the domain layer (Solver, Validator).
- *
- * The driver must not instantiate Solver or Validator directly.
- * All puzzle operations go through this class.
- *
- * Board format used in the catalog (matches the official PDF spec):
- *   Line 0: TYPE,ADJ,rows,cols
- *            TYPE: Q=square  H=hexagon  T=triangle
- *            ADJ:  C=sides   CA=sides+angles
- *   Lines 1..rows:  comma-separated cell tokens per row
- *            integer → fixed clue value
- *            #       → outside area (void)
- *            *       → inaccessible (also void)
- *            ?       → empty cell to fill
- */
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class DomainController {
 
-    private final Solver solver = new Solver();
+    private final Solver    solver    = new Solver();
     private final Validator validator = new Validator();
     private final List<HidatoCaseController> catalog;
+
+    private Board activeBoard;
 
     public DomainController() {
         catalog = buildCatalog();
     }
 
-    // ------------------------------------------------------------------ //
-    //  Public API — called only by the driver                             //
-    // ------------------------------------------------------------------ //
+    public int    getCatalogSize()                  { return catalog.size(); }
+    public String getCatalogCaseName(int i)         { return catalog.get(i).getName(); }
+    public String getCatalogCaseAdjacency(int i)    { return catalog.get(i).getAdjacencyDesc(); }
+    public boolean getCatalogCaseSolvable(int i)    { return catalog.get(i).isExpectedSolvable(); }
+    public String getCatalogCaseDescription(int i)  { return catalog.get(i).getDescription(); }
 
-    public List<HidatoCaseController> getCatalog() {
-        return Collections.unmodifiableList(catalog);
+    public void selectCase(int index) {
+        activeBoard = catalog.get(index).getBoard();
     }
 
-    public HidatoCaseController getCase(int index) {
-        return catalog.get(index);
+    public String getActiveBoardAsString() {
+        if (activeBoard == null) return "(no board selected)";
+        return activeBoard.toString();
     }
 
-    /** True if the board has no contradictions (consecutive clues adjacent, no duplicates). */
-    public boolean isPartiallyValid(Board board) {
-        return validator.isPartiallyValid(board);
+    public boolean isPartiallyValid() {
+        if (activeBoard == null) return false;
+        return validator.isPartiallyValid(activeBoard);
     }
 
-    /** True only if the board is fully filled and forms a valid Hidato solution. */
-    public boolean isValidSolution(Board board) {
-        return validator.isValidSolution(board);
+    public boolean isValidSolution() {
+        if (activeBoard == null) return false;
+        return validator.isValidSolution(activeBoard);
     }
 
-    /** Solves the board in-place. Returns true if a solution was found. */
-    public boolean solve(Board board) {
-        return solver.solve(board);
+    public boolean hasSolution() {
+        if (activeBoard == null) return false;
+        Board copy = new Board(activeBoard);
+        return solver.solve(copy);
     }
 
-    /** Counts distinct solutions up to {@code limit}. */
-    public int countSolutions(Board board, int limit) {
-        return solver.countSolutions(board, limit);
+    public boolean solve() {
+        if (activeBoard == null) return false;
+        return solver.solve(activeBoard);
     }
 
-    // ------------------------------------------------------------------ //
-    //  Predefined catalog                                                 //
-    // ------------------------------------------------------------------ //
+    private static final String HIDATOS_DIR = "EXE/DriverHidato/hidatos";
 
     private List<HidatoCaseController> buildCatalog() {
         List<HidatoCaseController> list = new ArrayList<>();
+        File dir = new File(HIDATOS_DIR);
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".txt"));
 
-        // ── SOLVABLE ────────────────────────────────────────────────────
+        if (files == null || files.length == 0) {
+            System.err.println("[DomainController] No hidato files found in " + HIDATOS_DIR);
+            return list;
+        }
 
-        list.add(parse(
-            "Square 4-way  ·  3×3 straight path",
-            "Square — sides only",
-            true,
-            "Minimal 3×3 board. Clues 1 (top-left) and 9 (bottom-right) force a single winding path.",
-            new String[]{
-                "Q,C,3,3",
-                "1,?,?",
-                "?,?,?",
-                "?,?,9"
+        Arrays.sort(files);
+        for (File f : files) {
+            try {
+                list.add(loadFromFile(f));
+            } catch (Exception e) {
+                System.err.println("[DomainController] Could not load " + f.getName() + ": " + e.getMessage());
             }
-        ));
-
-        list.add(parse(
-            "Square 8-way  ·  3×4 L-shape  (PDF example)",
-            "Square — sides + diagonals",
-            true,
-            "Official PDF example. L-shaped playable area; clues 1, 7 and 9 anchor the path.",
-            new String[]{
-                "Q,CA,3,4",
-                "#,1,?,#",
-                "?,?,?,?",
-                "7,?,9,#"
-            }
-        ));
-
-        list.add(parse(
-            "Square 8-way  ·  5×5 diamond  (PDF example)",
-            "Square — sides + diagonals",
-            true,
-            "Diamond-shaped 5×5 board from the spec. Four fixed clues (1, 3, 8, 11). " +
-            "Inaccessible cells (*) are treated as void.",
-            new String[]{
-                "Q,CA,5,5",
-                "#,#,1,#,#",
-                "#,?,*,?,#",
-                "8,?,?,?,3",
-                "#,?,11,*,#",
-                "#,#,?,#,#"
-            }
-        ));
-
-        list.add(parse(
-            "Hexagon sides  ·  4×3 offset grid  (PDF example)",
-            "Hexagonal — sides only",
-            true,
-            "Offset hexagonal grid from the official PDF. Eight playable cells; " +
-            "clues 1 and 8 anchor the start and end.",
-            new String[]{
-                "H,C,4,3",
-                "#,*,?",
-                "?,?,*",
-                "1,?,8",
-                "?,?,#"
-            }
-        ));
-
-        list.add(parse(
-            "Triangle sides  ·  4×4 pruned corners",
-            "Triangle — sides only",
-            true,
-            "4×4 triangular grid. Corner cells (0,3) and (3,3) have only one neighbour " +
-            "and are pre-voided. Value 1 placed at top-left.",
-            new String[]{
-                "T,C,4,4",
-                "1,?,?,#",
-                "?,?,?,?",
-                "?,?,?,?",
-                "?,?,?,#"
-            }
-        ));
-
-        // ── UNSOLVABLE ──────────────────────────────────────────────────
-
-        list.add(parse(
-            "Square 4-way  ·  Non-adjacent 1 and 2  [UNSOLVABLE]",
-            "Square — sides only",
-            false,
-            "Clues 1 and 2 are placed two rows apart with only 4-way adjacency. " +
-            "They cannot be neighbours, so no valid path exists.",
-            new String[]{
-                "Q,C,3,3",
-                "?,1,?",
-                "?,?,?",
-                "?,2,?"
-            }
-        ));
-
-        list.add(parse(
-            "Square 8-way  ·  Trapped endpoint  [UNSOLVABLE]",
-            "Square — sides + diagonals",
-            false,
-            "Void barriers isolate clue 3 at (0,2). After the forced move 1→2→3, " +
-            "cell (0,2) has no free neighbours — the path cannot continue.",
-            new String[]{
-                "Q,CA,3,3",
-                "1,#,3",
-                "#,?,#",
-                "?,?,?"
-            }
-        ));
-
-        list.add(parse(
-            "Triangle sides  ·  Barrier splits 1 and 2  [UNSOLVABLE]",
-            "Triangle — sides only",
-            false,
-            "Clues 1 (col 0) and 2 (col 4) are separated by a full void barrier in row 0. " +
-            "They cannot be adjacent, making the puzzle unsolvable.",
-            new String[]{
-                "T,C,3,5",
-                "1,#,#,#,2",
-                "?,?,?,?,?",
-                "#,#,#,#,#"
-            }
-        ));
-
+        }
         return list;
     }
 
-    // ------------------------------------------------------------------ //
-    //  Board parsing (PDF format → Board)                                 //
-    // ------------------------------------------------------------------ //
+    private HidatoCaseController loadFromFile(File file) throws IOException {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null)
+                if (!line.trim().isEmpty()) lines.add(line.trim());
+        }
+        if (lines.size() < 6)
+            throw new IOException("File too short (expected at least 6 lines)");
+
+        String  name     = lines.get(0);
+        String  adjDesc  = lines.get(1);
+        boolean solvable = lines.get(2).equalsIgnoreCase("SOLVABLE");
+        String  desc     = lines.get(3);
+        String[] boardLines = lines.subList(4, lines.size()).toArray(new String[0]);
+
+        return parse(name, adjDesc, solvable, desc, boardLines);
+    }
 
     private HidatoCaseController parse(String name, String adjDesc, boolean solvable,
-                             String description, String[] lines) {
+                                       String description, String[] lines) {
         String[] header = lines[0].split(",");
         String typeCode = header[0].trim();
         String adjCode  = header[1].trim();
@@ -218,7 +123,7 @@ public class DomainController {
                 shape    = CellShape.TRIANGLE;
                 strategy = new TriangleAdjacencyStrategy();
                 break;
-            default: // "Q"
+            default:
                 shape    = CellShape.SQUARE;
                 strategy = adjCode.equals("CA")
                     ? new SquareFullAdjacencyStrategy()
@@ -232,14 +137,9 @@ public class DomainController {
             for (int c = 0; c < cols; c++) {
                 String token = tokens[c].trim();
                 switch (token) {
-                    case "#":
-                    case "*":
-                        board.getCell(r, c).setVoid(true);
-                        break;
-                    case "?":
-                        break; // already empty by default
-                    default:
-                        board.getCell(r, c).setFixedValue(Integer.parseInt(token));
+                    case "#": case "*": board.getCell(r, c).setVoid(true); break;
+                    case "?": break;
+                    default:  board.getCell(r, c).setFixedValue(Integer.parseInt(token));
                 }
             }
         }

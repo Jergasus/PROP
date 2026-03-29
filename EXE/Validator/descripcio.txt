@@ -1,0 +1,26 @@
+TEST SUITE: Validator
+=====================
+Classes tested: model.algorithms.Validator
+
+Tests included in ValidatorTest.java:
+  - validSolution_correct2x2            : 2×2 board with a correct consecutive path
+  - validSolution_emptyBoardFails       : no values placed — must be rejected
+  - validSolution_duplicateValueFails   : board with a duplicate cell value
+  - validSolution_brokenPath4way        : 4-way board where consecutive pair is not adjacent
+  - validSolution_correct3x3Snake       : snake-path 3×3 board — must be accepted
+  - validSolution_broken3x3Fails        : 3×3 board with a break in the path
+  - validSolution_8way_orthogonalOk     : orthogonal path is valid in 8-way mode
+  - validSolution_8way_diagonalAllowed  : diagonal step is valid in 8-way mode
+  - validSolution_boardWithVoids        : path jumps over void cells — must be rejected
+  - partiallyValid_emptyBoardIsOk       : no numbers yet — no constraint can be violated
+  - partiallyValid_noConflict           : single clue placed, no pair to check
+  - partiallyValid_conflictDetected     : consecutive clues placed in non-adjacent cells
+  - partiallyValid_gapAllowed           : non-consecutive clues in non-adjacent cells — ok
+  - partiallyValid_conflict8way_diagonalOk : diagonal consecutive pair is fine in 8-way
+
+Source file (in FONTS):
+  src/test/ValidatorTest.java
+
+Compilation (from project root):
+  javac -cp "lib/*" -d out $(find src -name "*.java")
+  java  -cp "out:lib/*" org.junit.runner.JUnitCore test.ValidatorTest

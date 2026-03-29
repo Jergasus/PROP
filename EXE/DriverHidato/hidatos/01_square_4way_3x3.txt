@@ -1,0 +1,8 @@
+Square 4-way  ·  3×3 straight path
+Square — sides only
+SOLVABLE
+Minimal 3×3 board. Clues 1 (top-left) and 9 (bottom-right) force a single winding path.
+Q,C,3,3
+1,?,?
+?,?,?
+?,?,9

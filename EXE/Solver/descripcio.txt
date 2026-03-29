@@ -1,0 +1,26 @@
+TEST SUITE: Solver
+==================
+Classes tested: model.algorithms.Solver, model.algorithms.Validator
+
+Tests included in SolverTest.java:
+  - solve_1x1_trivial                   : single-cell board is already a valid Hidato
+  - solve_2x2_withClues                 : 2×2 board, solver fills the two missing values
+  - solve_3x3_sparseClues               : only first and last cell fixed; solver has max freedom
+  - solve_3x3_denseClues                : all but one clue given; solver fills the gap
+  - solve_8way_diagonalPath             : 8-way board; path may go diagonal
+  - solve_resultMutatesBoard            : after solve(), no cell may remain at 0
+  - solve_unsolvable_noStart            : no cell with value 1 — solver returns false
+  - solve_unsolvable_fixedCluesNotAdjacent : consecutive clues placed in non-adjacent cells
+  - solve_unsolvable_4way_corners       : path physically cannot connect in 4-way
+  - countSolutions_uniqueSolution       : exactly one solution when well-constrained
+  - countSolutions_fullyFixedBoard      : all values given — still exactly one solution
+  - countSolutions_noSolution           : zero solutions when value 1 is absent
+  - countSolutions_limitsEarlyExit      : limit=2 stops counting after 2 solutions found
+  - solve_doesNotOverwriteFixedCells    : fixed clues must keep their values after solve()
+
+Source file (in FONTS):
+  src/test/SolverTest.java
+
+Compilation (from project root):
+  javac -cp "lib/*" -d out $(find src -name "*.java")
+  java  -cp "out:lib/*" org.junit.runner.JUnitCore test.SolverTest

@@ -1,0 +1,32 @@
+DRIVER: DriverHidato (SolverValidatorDriver)
+============================================
+Interactive demo driver for the Solver and Validator algorithms.
+
+Architecture:
+  - Presentation layer: SolverValidatorDriver.java (console I/O only, no model imports)
+  - Controller layer  : controller.DomainController (mediates all domain access)
+  - Domain layer      : model.algorithms.Solver, model.algorithms.Validator
+
+Flow:
+  1. Main menu: [1] Validate  [2] Solve  [0] Exit
+  2. Catalog of predefined test cases is shown (loaded from hidatos/)
+  3. User selects a case; DomainController loads it as the active board
+  4. Validate: checks partial validity and reports whether a solution exists
+     Solve   : finds and displays the solution, then validates it
+
+Hidato test files (hidatos/):
+  01_square_4way_3x3.txt          — Square 4-way, solvable
+  02_square_8way_3x4_pdf.txt      — Square 8-way, solvable (PDF example)
+  03_square_8way_5x5_diamond_pdf.txt — Square 8-way diamond, solvable (PDF example)
+  04_hexagon_4x3_pdf.txt          — Hexagonal, solvable (PDF example)
+  05_triangle_4x4.txt             — Triangle, solvable
+  06_square_4way_unsolvable.txt   — Square 4-way, unsolvable
+  07_square_8way_unsolvable.txt   — Square 8-way, unsolvable
+  08_triangle_unsolvable.txt      — Triangle, unsolvable
+
+Source file (in FONTS):
+  src/test/drivers/SolverValidatorDriver.java
+
+Run (from project root):
+  ./compilar.sh        (Mac/Linux)
+  compilar.bat         (Windows)
