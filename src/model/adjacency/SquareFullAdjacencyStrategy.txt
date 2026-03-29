@@ -1,0 +1,8 @@
+CLASS: SquareFullAdjacencyStrategy
+Package: model.adjacency
+Layer: Model
+
+Purpose:
+  Adjacency for square cells using 8-way (orthogonal + diagonal) connectivity.
+  Neighbours are the 8 surrounding cells.
+  areAdjacent() checks that both row and column differences are at most 1 (O(1)).

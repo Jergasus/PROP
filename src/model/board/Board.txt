@@ -1,0 +1,18 @@
+CLASS: Board
+Package: model.board
+Layer: Model
+
+Purpose:
+  Represents the Hidato grid. Holds a 2D array of Cells and delegates all
+  adjacency logic to an AdjacencyStrategy. Supports square, hexagonal, and
+  triangular geometries via the strategy pattern.
+
+Key public methods:
+  - getCell(r, c) / getCell(pos): returns the Cell at the given position
+  - getNeighbors(pos): returns non-void adjacent cells according to the strategy
+  - areAdjacent(p1, p2): true if two positions are adjacent
+  - getCellCount(): number of non-void (playable) cells
+  - pruneDeadEnds(): iteratively voids cells with fewer than 2 neighbours
+  - placeRandomVoids(n, random): places n void cells while keeping the board connected
+  - isConnected(): BFS check that all non-void cells form one connected component
+  - Board(Board other): deep-copy constructor (used by DomainController.hasSolution)

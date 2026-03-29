@@ -5,7 +5,7 @@ Each subdirectory includes a descripcio.txt explaining its contents.
 
 Subdirectories:
   Solver/        JUnit tests for model.algorithms.Solver + Validator
-                 Source: src/test/SolverTest.java (14 tests)
+                 Source: src/test/SolverTest.java (18 tests)
 
   Validator/     JUnit tests for model.algorithms.Validator
                  Source: src/test/ValidatorTest.java (14 tests)

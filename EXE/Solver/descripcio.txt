@@ -17,6 +17,10 @@ Tests included in SolverTest.java:
   - countSolutions_noSolution           : zero solutions when value 1 is absent
   - countSolutions_limitsEarlyExit      : limit=2 stops counting after 2 solutions found
   - solve_doesNotOverwriteFixedCells    : fixed clues must keep their values after solve()
+  - solve_hexagonal_solvable            : 4x3 offset hex grid with clues 1 and 8 finds a valid path
+  - solve_hexagonal_unsolvable          : two isolated hex cells cannot form a path
+  - solve_triangle_solvable             : 2x3 triangle grid with clues 1 and 6 finds the unique path
+  - solve_triangle_unsolvable           : two non-adjacent triangle cells cannot form a path
 
 Source file (in FONTS):
   src/test/SolverTest.java

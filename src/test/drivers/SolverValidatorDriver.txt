@@ -1,0 +1,20 @@
+CLASS: SolverValidatorDriver
+Package: test.drivers
+Layer: Presentation (driver)
+
+Purpose:
+  Interactive console driver for the Solver and Validator demo.
+  Presentation layer only — no model.* imports. All domain logic is accessed
+  through DomainController. Lets the user pick a puzzle from the catalog and
+  either validate it (partial validity + solvability check) or solve it.
+
+Flow:
+  1. Main menu: [1] Validate  [2] Solve  [0] Exit
+  2. Catalog is listed (loaded from EXE/DriverHidato/hidatos/)
+  3. User selects a puzzle; DomainController loads it as the active board
+  4. Validate: prints board, reports partial validity and whether a solution exists
+     Solve:    prints board, solves in-place, prints solution and validator result
+
+Run:
+  ./compilar.sh   (Mac/Linux)
+  compilar.bat    (Windows)

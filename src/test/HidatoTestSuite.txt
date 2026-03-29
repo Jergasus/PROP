@@ -1,0 +1,15 @@
+CLASS: HidatoTestSuite
+Package: test
+Layer: Test
+
+Purpose:
+  JUnit 4 suite that groups all test classes so they can be run with a
+  single command. No test logic here; configuration is entirely in the
+  @RunWith and @Suite.SuiteClasses annotations.
+
+Included test classes:
+  - ValidatorTest (14 tests)
+  - SolverTest    (18 tests)
+
+Run command (from project root):
+  java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite

@@ -1,0 +1,8 @@
+CLASS: HexagonalAdjacencyStrategy
+Package: model.adjacency
+Layer: Model
+
+Purpose:
+  Adjacency for hexagonal cells in an offset grid (odd rows shifted right).
+  Each cell has up to 6 neighbours. The neighbour offsets differ depending on
+  whether the row is even or odd, which is handled by two separate direction arrays.

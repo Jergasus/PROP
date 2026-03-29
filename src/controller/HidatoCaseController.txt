@@ -1,0 +1,16 @@
+CLASS: HidatoCaseController
+Package: controller
+Layer: Controller
+
+Purpose:
+  Immutable descriptor for a single predefined Hidato puzzle in the demo catalog.
+  Stores metadata (name, adjacency description, expected solvability, free-text
+  description) together with the canonical Board. Returns deep copies of the board
+  so callers can mutate freely without affecting the catalog entry.
+
+Public methods:
+  - getName(): puzzle name shown in the catalog menu
+  - getAdjacencyDesc(): human-readable adjacency type (e.g. "Square — sides only")
+  - isExpectedSolvable(): whether this puzzle is expected to have a solution
+  - getDescription(): one-line description of the puzzle
+  - getBoard(): deep copy of the stored Board

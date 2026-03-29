@@ -1,0 +1,17 @@
+CLASS: Cell
+Package: model.cell
+Layer: Model
+
+Purpose:
+  Represents a single cell in the Hidato grid. Tracks its value (0 = empty),
+  position, shape, and two state flags: fixed (given clue) and void (not playable).
+  Fixed cells cannot have their value changed via setValue().
+
+Public methods:
+  - getValue() / setValue(v): read/write the cell's current value
+  - setFixedValue(v): sets value and marks the cell as a fixed clue
+  - setAsEmpty(): resets to value 0, not fixed, not void
+  - setVoid(bool): marks the cell as void (clears value and fixed flag)
+  - isEmpty() / isFixed() / isVoid(): state queries
+  - getPosition(): the cell's (row, col) position
+  - getShape(): the CellShape (SQUARE, HEXAGON, TRIANGLE)

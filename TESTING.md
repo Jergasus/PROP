@@ -15,7 +15,7 @@
 find src -name "*.java" > sources.txt && javac -cp "lib/*" -d out @sources.txt
 ```
 
-### 2. Run JUnit test suite (28 tests)
+### 2. Run JUnit test suite (32 tests)
 
 ```bash
 java -cp "out:lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
@@ -44,7 +44,7 @@ Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty Full
 javac -cp "lib/*" -d out "@sources.txt"
 ```
 
-### 2. Run JUnit test suite (28 tests)
+### 2. Run JUnit test suite (32 tests)
 
 ```powershell
 java -cp "out;lib/*" org.junit.runner.JUnitCore test.HidatoTestSuite
@@ -69,6 +69,6 @@ Get-ChildItem -Recurse -Filter "*.java" src | Select-Object -ExpandProperty Full
 | Test class | Tests | What it validates |
 |---|---|---|
 | `ValidatorTest` | 14 | Valid/invalid solutions, partial validation, edge cases |
-| `SolverTest` | 14 | Backtracking solver, unique/multiple solutions, all geometries |
+| `SolverTest` | 18 | Backtracking solver, unique/multiple solutions, all geometries |
 
-Expected output: `OK (28 tests)`
+Expected output: `OK (32 tests)`

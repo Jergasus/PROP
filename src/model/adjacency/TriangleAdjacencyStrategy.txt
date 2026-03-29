@@ -1,0 +1,9 @@
+CLASS: TriangleAdjacencyStrategy
+Package: model.adjacency
+Layer: Model
+
+Purpose:
+  Adjacency for triangular cells. Each cell has up to 3 neighbours: left, right,
+  and one vertical neighbour whose direction depends on the cell's orientation.
+  Cells where (row + col) % 2 == 0 point up and connect downward;
+  cells where (row + col) % 2 == 1 point down and connect upward.

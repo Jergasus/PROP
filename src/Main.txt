@@ -1,0 +1,9 @@
+CLASS: Main
+Package: (default)
+Layer: Entry point
+
+Purpose:
+  Application entry point. Delegates to SolverValidatorDriver for delivery 1.
+
+Main method:
+  - main(String[]): launches SolverValidatorDriver

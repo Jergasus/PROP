@@ -4,13 +4,14 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import model.adjacency.HexagonalAdjacencyStrategy;
 import model.adjacency.SquareAdjacencyStrategy;
 import model.adjacency.SquareFullAdjacencyStrategy;
+import model.adjacency.TriangleAdjacencyStrategy;
 import model.algorithms.Solver;
 import model.algorithms.Validator;
 import model.board.Board;
 import model.cell.CellShape;
-import model.cell.Position;
 
 public class SolverTest {
 
@@ -156,5 +157,55 @@ public class SolverTest {
         assertEquals(9, b.getCell(2, 2).getValue());
         assertTrue(b.getCell(0, 0).isFixed());
         assertTrue(b.getCell(2, 2).isFixed());
+    }
+
+    @Test
+    public void solve_hexagonal_solvable() {
+        // 4x3 offset hex grid — 8 playable cells, clues 1 and 8
+        // Row 0: all void  Row 1: all empty  Row 2: 1,?,8  Row 3: ?,?,void
+        Board b = new Board(4, 3, CellShape.HEXAGON, new HexagonalAdjacencyStrategy());
+        b.getCell(0, 0).setVoid(true);
+        b.getCell(0, 1).setVoid(true);
+        b.getCell(0, 2).setVoid(true);
+        b.getCell(3, 2).setVoid(true);
+        b.getCell(2, 0).setFixedValue(1);
+        b.getCell(2, 2).setFixedValue(8);
+        assertTrue(solver.solve(b));
+        assertTrue(validator.isValidSolution(b));
+    }
+
+    @Test
+    public void solve_hexagonal_unsolvable() {
+        // Only two non-void cells, and they are not adjacent in hex grid
+        Board b = new Board(4, 3, CellShape.HEXAGON, new HexagonalAdjacencyStrategy());
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 3; j++)
+                b.getCell(i, j).setVoid(true);
+        b.getCell(0, 0).setFixedValue(1);
+        b.getCell(3, 2).setFixedValue(2);
+        assertFalse(solver.solve(b));
+    }
+
+    @Test
+    public void solve_triangle_solvable() {
+        // 2x3 triangle grid — 6 cells, clues 1 at (0,0) and 6 at (0,1)
+        // Only valid path: (0,0)→(1,0)→(1,1)→(1,2)→(0,2)→(0,1)
+        Board b = new Board(2, 3, CellShape.TRIANGLE, new TriangleAdjacencyStrategy());
+        b.getCell(0, 0).setFixedValue(1);
+        b.getCell(0, 1).setFixedValue(6);
+        assertTrue(solver.solve(b));
+        assertTrue(validator.isValidSolution(b));
+    }
+
+    @Test
+    public void solve_triangle_unsolvable() {
+        // 1 and 2 fixed in non-adjacent triangle cells
+        Board b = new Board(2, 3, CellShape.TRIANGLE, new TriangleAdjacencyStrategy());
+        for (int i = 0; i < 2; i++)
+            for (int j = 0; j < 3; j++)
+                b.getCell(i, j).setVoid(true);
+        b.getCell(0, 0).setFixedValue(1);
+        b.getCell(1, 2).setFixedValue(2);
+        assertFalse(solver.solve(b));
     }
 }

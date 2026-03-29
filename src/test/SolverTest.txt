@@ -1,0 +1,28 @@
+CLASS: SolverTest
+Package: test
+Layer: Test
+
+Purpose:
+  JUnit 4 tests for model.algorithms.Solver.
+  Covers solve() and countSolutions() across square (4-way and 8-way),
+  hexagonal, and triangular board geometries.
+
+Tests (18):
+  solve_1x1_trivial                    - single-cell board is already solved
+  solve_2x2_withClues                  - solver fills two missing values
+  solve_3x3_sparseClues                - only first and last cell fixed
+  solve_3x3_denseClues                 - all but one clue given; solver fills the gap
+  solve_8way_diagonalPath              - diagonal step is valid in 8-way mode
+  solve_resultMutatesBoard             - after solve(), no cell may remain at 0
+  solve_unsolvable_noStart             - no cell with value 1; solver returns false
+  solve_unsolvable_fixedCluesNotAdjacent - consecutive clues in non-adjacent cells
+  solve_unsolvable_4way_corners        - path cannot connect in 4-way topology
+  countSolutions_uniqueSolution        - exactly one solution when well-constrained
+  countSolutions_fullyFixedBoard       - all values given; still exactly one solution
+  countSolutions_noSolution            - zero solutions when value 1 is absent
+  countSolutions_limitsEarlyExit       - limit=2 stops counting after 2 solutions
+  solve_doesNotOverwriteFixedCells     - fixed clues keep their values after solve()
+  solve_hexagonal_solvable             - 4x3 offset hex grid finds a valid path
+  solve_hexagonal_unsolvable           - two isolated hex cells return false
+  solve_triangle_solvable              - 2x3 triangle grid finds the unique path
+  solve_triangle_unsolvable            - two non-adjacent triangle cells return false
