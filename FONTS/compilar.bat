@@ -14,3 +14,6 @@ javac -d bin -cp "lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar;src;..\EXE" @so
 del sources.txt
 
 echo Compilacio finalitzada
+
+:: Executem el driver interactiu
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar;..\EXE" DriverHidato.SolverValidatorDriver
