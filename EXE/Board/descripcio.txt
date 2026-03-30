@@ -1,0 +1,23 @@
+Joc de proves de la classe Board (Test Unitari).
+
+Aquest test comprova el correcte funcionament de la classe Board del model de domini.
+S'hi verifiquen:
+- Les constructores (normal i per còpia profunda).
+- La validació de posicions (casos normals i fora de límits).
+- L'obtenció correcta de cel·les veïnes segons l'estratègia (provat amb SquareAdjacencyStrategy).
+- El mètode isConnected() que comprova si el tauler és un graf connex.
+- L'algorisme de prunatge (pruneDeadEnds) per eliminar cel·les aïllades.
+- La inserció de forats aleatoris (placeRandomVoids) mantenint la connectivitat.
+
+No es requereixen fitxers de dades externs.
+
+OPERATIVA D'EXECUCIÓ:
+Situeu-vos al directori FONTS/ del lliurament.
+1. Executeu el script compilar.sh (Linux/Mac) o compilar.bat (Windows) per generar els binaris.
+2. Sense canviar de directori, executeu el test amb la comanda corresponent al vostre sistema operatiu:
+
+Per a Linux/Mac:
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore BoardTest
+
+Per a Windows:
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore BoardTest
