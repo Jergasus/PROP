@@ -1,17 +1,16 @@
 package domini.controller;
 
-import domini.model.board.Board;
+import domini.algorithms.Solver;
+import domini.algorithms.Validator;
 import domini.model.Hidato.Hidato;
-import domini.model.cell.CellShape;
 import domini.model.adjacency.AdjacencyStrategy;
 import domini.model.adjacency.HexagonalAdjacencyStrategy;
 import domini.model.adjacency.SquareAdjacencyStrategy;
 import domini.model.adjacency.SquareFullAdjacencyStrategy;
 import domini.model.adjacency.TriangleAdjacencyStrategy;
-import domini.algorithms.Solver;
-import domini.algorithms.Validator;
+import domini.model.board.Board;
+import domini.model.cell.CellShape;
 import domini.stubs.StubGestorDades;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,7 +131,6 @@ public class CtrlDomini {
 
         Board board = new Board(rows, cols, shape, strategy);
 
-        // Els valors del tauler comencen a l'índex 1 de l'array 'csvLines' ara!
         for (int r = 0; r < rows; r++) {
             String[] tokens = csvLines[r + 1].split(",");
             for (int c = 0; c < cols; c++) {
