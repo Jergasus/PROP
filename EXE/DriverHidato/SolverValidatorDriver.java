@@ -16,9 +16,9 @@ public class SolverValidatorDriver {
             int choice = readInt(0, 2);
 
             switch (choice) {
-                case 0: running = false;       break;
-                case 1: handleFlow(false);     break;
-                case 2: handleFlow(true);      break;
+                case 0: running = false; break;
+                case 1: handleFlow(false); break;
+                case 2: handleFlow(true); break;
             }
         }
 
@@ -37,7 +37,7 @@ public class SolverValidatorDriver {
         System.out.println();
 
         if (solve) runSolve(idx - 1);
-        else       runValidate(idx - 1);
+        else runValidate(idx - 1);
 
         System.out.println("\nPress ENTER to continue...");
         sc.nextLine();
@@ -67,9 +67,9 @@ public class SolverValidatorDriver {
             return;
         }
 
-        long    t0      = System.currentTimeMillis();
+        long t0 = System.currentTimeMillis();
         boolean solved  = domain.solve();
-        long    elapsed = System.currentTimeMillis() - t0;
+        long elapsed = System.currentTimeMillis() - t0;
 
         if (solved) {
             System.out.println("  Solution (" + elapsed + " ms):\n");
