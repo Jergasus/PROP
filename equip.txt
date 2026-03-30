@@ -1,0 +1,8 @@
+Subgrup: [SUBGRUP]
+
+Cognoms, Nom           
+-----------------------
+[Cognom1 Cognom2, Nom1]
+[Cognom1 Cognom2, Nom2]
+[Cognom1 Cognom2, Nom3]
+[Cognom1 Cognom2, Nom4]

@@ -1,0 +1,9 @@
+Projecte: Hidato — Practica de PROP (Q2 2025-2026)
+
+Estructura del lliurament:
+
+DOCS/   - Documentacio del projecte (casos d'us, model conceptual, estructures de dades, jocs de proves).
+FONTS/  - Codi font Java, scripts de compilacio i llibreries.
+EXE/    - Tests unitaris i driver interactiu executables.
+
+Per compilar i executar el projecte, consulteu FONTS/index.txt o el fitxer TESTING.md.
