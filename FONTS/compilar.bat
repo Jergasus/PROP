@@ -1,21 +1,16 @@
 @echo off
-REM Compila i executa el projecte Hidato
-REM S'ha d'executar SEMPRE des del directori FONTS
+echo Iniciant la compilacio del projecte Hidato...
 
-if not exist ..\EXE\bin mkdir ..\EXE\bin
+:: 1. Creem el directori on aniran els fitxers binaris (.class)
+if not exist "bin" mkdir bin
 
-dir /s /b src\*.java > %TEMP%\hidato_sources.txt
-dir /s /b ..\EXE\*.java >> %TEMP%\hidato_sources.txt
+:: 2. Creem una llista temporal amb tots els fitxers .java de FONTS i EXE
+dir /s /B src\*.java ..\EXE\*.java > sources.txt
 
-javac -cp "lib\*" -d ..\EXE\bin @%TEMP%\hidato_sources.txt
+:: 3. Compilem usant l'arxiu temporal i incloent les llibreries de JUnit al Classpath
+javac -d bin -cp "lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar;src;..\EXE" @sources.txt
 
-if errorlevel 1 (
-    echo [ERROR] La compilacio ha fallat.
-    exit /b 1
-)
+:: 4. Esborrem l'arxiu temporal per mantenir el directori net
+del sources.txt
 
-echo --------------------------------------------------
-echo Executant Driver...
-echo --------------------------------------------------
-
-java -cp "..\EXE\bin;lib\*" SolverValidatorDriver
+echo Compilacio finalitzada amb exit! Els binaris son a la carpeta FONTS\bin.

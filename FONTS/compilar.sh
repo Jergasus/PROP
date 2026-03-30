@@ -1,39 +1,19 @@
 #!/bin/bash
 
-# Compila i executa el projecte Hidato
-# S'ha d'executar SEMPRE des del directori FONTS
+echo "Iniciant la compilacio del projecte Hidato..."
 
-mkdir -p ../EXE/bin [cite: 116, 117]
+# 1. Creem el directori on aniran els fitxers binaris (.class)
+mkdir -p bin
 
-# Generem un fitxer temporal amb totes les rutes dels .java
-find src -name "*.java" > hidato_sources.txt 
-find ../EXE -name "*.java" >> hidato_sources.txt
+# 2. Creem una llista temporal amb tots els fitxers .java de FONTS i EXE
+find src ../EXE -name "*.java" > sources.txt
 
-# Detectem el sistema operatiu per al separador del Classpath
-# Linux i Mac usen ":", Windows (Cygwin/Git Bash) usa ";"
-if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
-    SEP=";"
+# 3. Compilem usant l'arxiu temporal i incloent les llibreries de JUnit al Classpath
+if javac -d bin -cp "lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar:src:../EXE" @sources.txt; then
+    echo "Compilacio finalitzada amb exit! Els binaris son a la carpeta FONTS/bin."
 else
-    SEP=":"
+    echo "ERROR: La compilacio ha fallat. Revisa el teu codi Java."
 fi
 
-# Compila usant la llista de fitxers i les llibreries JUnit 4 [cite: 41, 114]
-javac -cp "lib/*" -d ../EXE/bin @hidato_sources.txt
-
-# Comprovem si hi ha hagut errors de compilació [cite: 39, 40]
-if [ $? -ne 0 ]; then
-    echo "[ERROR] La compilacio ha fallat."
-    rm hidato_sources.txt
-    exit 1
-fi
-
-# Neteja de l'arxiu de text intermedi
-rm hidato_sources.txt
-
-echo "--------------------------------------------------"
-echo "Executant Driver..."
-echo "--------------------------------------------------"
-
-# Executem el Driver que utilitza el CtrlDomini [cite: 76, 116]
-# Ara fem servir la variable SEP per ser compatibles amb qualsevol sistema
-java -cp "../EXE/bin${SEP}lib/*" SolverValidatorDriver
+# 4. Esborrem l'arxiu temporal per mantenir el directori net
+rm -f sources.txt
