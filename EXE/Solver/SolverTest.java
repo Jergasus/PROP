@@ -21,7 +21,6 @@ public class SolverTest {
         validator = new Validator();
     }
 
-    // --- HELPERS ---
     private Board square4(int n, int[][] values) {
         Board b = new Board(n, n, CellShape.SQUARE, new SquareAdjacencyStrategy());
         for (int i = 0; i < n; i++)
@@ -37,8 +36,6 @@ public class SolverTest {
                 if (values[i][j] > 0) b.getCell(new Position(i, j)).setFixedValue(values[i][j]);
         return b;
     }
-
-    // --- TOTS ELS TEUS TESTS ORIGINALS (CORREGITS) ---
 
     @Test
     public void solve_1x1_trivial() {
@@ -106,8 +103,6 @@ public class SolverTest {
         Board b = square8(3, new int[][]{{1,0,0},{0,0,0},{0,0,0}});
         assertEquals(2, solver.countSolutions(b, 2));
     }
-
-    // --- ELS NOUS CASOS EXTREMS AFEGITS ---
 
     @Test
     public void solve_unsolvable_isolatedIsland() {

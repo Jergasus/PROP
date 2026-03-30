@@ -18,7 +18,6 @@ public class ValidatorTest {
         validator = new Validator();
     }
 
-    // Helper per crear taulers de prova ràpidament
     private Board createBoard(int rows, int cols, CellShape shape, AdjacencyStrategy strategy, int[][] values) {
         Board b = new Board(rows, cols, shape, strategy);
         for (int i = 0; i < rows; i++) {
@@ -32,8 +31,6 @@ public class ValidatorTest {
         }
         return b;
     }
-
-    // --- TESTS DE CASOS VÀLIDS ---
 
     @Test
     public void isValid_Square4_Success() {
@@ -52,8 +49,6 @@ public class ValidatorTest {
         Board b = createBoard(2, 2, CellShape.SQUARE, new SquareFullAdjacencyStrategy(), vals);
         assertTrue("Hauria de ser valida en 8-way per la diagonal", validator.isValidSolution(b));
     }
-
-    // --- TESTS DE CASOS LÍMIT I ERRORS (INVALID SOLUTIONS) ---
 
     @Test
     public void isInvalid_BrokenPath() {
@@ -96,13 +91,8 @@ public class ValidatorTest {
         // 1 2 (En triangles o hexagons l'adjacencia canvia)
         // 4 3
         int[][] vals = {{1, 2}, {4, 3}};
-        // Suposem que en la topologia triangular (0,0) i (1,1) no fossin adjacents
         Board b = createBoard(2, 2, CellShape.TRIANGLE, new TriangleAdjacencyStrategy(), vals);
-        // El resultat dependra de la teva implementacio de TriangleAdjacencyStrategy
-        // pero serveix per testejar que el validador consulta l'estrategia correctament.
-        boolean res = validator.isValidSolution(b);
-        // Si no son adjacents, ha de ser false
-        assertFalse("Hauria de fallar si la topologia no permet el pas", res);
+        assertFalse("Hauria de fallar si la topologia no permet el pas", validator.isValidSolution(b));
     }
 
     @Test
