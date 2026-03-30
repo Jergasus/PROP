@@ -1,3 +1,4 @@
+package DriverHidato;
 import domini.controller.CtrlDomini;
 import java.util.Scanner;
 

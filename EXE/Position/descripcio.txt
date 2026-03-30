@@ -1,0 +1,20 @@
+Joc de proves del record Position (Test Unitari).
+
+Aquest test valida la implementacio del record Position, que representa les coordenades d'una cella.
+S'hi comprova:
+- La correcta inicialitzacio a traves del constructor i l'acces via els getters autogenerats per Java.
+- El metode toString per garantir un format de coordenades (fila, columna) llegible.
+- Les operacions d'igualtat (equals) i de generacio de hash (hashCode), fonamentals perque els objectes Position puguin ser usats com a claus en estructures de dades com HashMap dins de l'algorisme de resolucio.
+
+No es requereixen fitxers de dades externs.
+
+OPERATIVA D'EXECUCIO:
+Situeu-vos al directori FONTS/ del lliurament.
+1. Executeu el script compilar.sh (Linux/Mac) o compilar.bat (Windows) per generar els binaris.
+2. Sense canviar de directori, executeu el test amb la comanda corresponent al vostre sistema operatiu:
+
+Per a Linux/Mac:
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore PositionTest
+
+Per a Windows:
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore PositionTest

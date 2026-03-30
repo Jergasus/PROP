@@ -11,6 +11,6 @@ Subdirectories:
   DriverHidato/  Interactive driver (SolverValidatorDriver)
                  Predefined Hidatos in hidatos/
 
-To launch the interactive driver go to directory src and execute from terminal:
+To launch the interactive driver go to directory FONTS and execute from terminal:
   ./compilar.sh        (Mac/Linux)
   compilar.bat         (Windows)

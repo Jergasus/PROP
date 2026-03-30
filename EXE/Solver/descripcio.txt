@@ -1,30 +1,25 @@
-TEST SUITE: Solver
-==================
-Classes tested: model.algorithms.Solver, model.algorithms.Validator
+Joc de proves de la classe Solver (Test Unitari).
 
-Tests included in SolverTest.java:
-  - solve_1x1_trivial                   : single-cell board is already a valid Hidato
-  - solve_2x2_withClues                 : 2×2 board, solver fills the two missing values
-  - solve_3x3_sparseClues               : only first and last cell fixed; solver has max freedom
-  - solve_3x3_denseClues                : all but one clue given; solver fills the gap
-  - solve_8way_diagonalPath             : 8-way board; path may go diagonal
-  - solve_resultMutatesBoard            : after solve(), no cell may remain at 0
-  - solve_unsolvable_noStart            : no cell with value 1 — solver returns false
-  - solve_unsolvable_fixedCluesNotAdjacent : consecutive clues placed in non-adjacent cells
-  - solve_unsolvable_4way_corners       : path physically cannot connect in 4-way
-  - countSolutions_uniqueSolution       : exactly one solution when well-constrained
-  - countSolutions_fullyFixedBoard      : all values given — still exactly one solution
-  - countSolutions_noSolution           : zero solutions when value 1 is absent
-  - countSolutions_limitsEarlyExit      : limit=2 stops counting after 2 solutions found
-  - solve_doesNotOverwriteFixedCells    : fixed clues must keep their values after solve()
-  - solve_hexagonal_solvable            : 4x3 offset hex grid with clues 1 and 8 finds a valid path
-  - solve_hexagonal_unsolvable          : two isolated hex cells cannot form a path
-  - solve_triangle_solvable             : 2x3 triangle grid with clues 1 and 6 finds the unique path
-  - solve_triangle_unsolvable           : two non-adjacent triangle cells cannot form a path
+Objecte de la prova:
+Validar l'algorisme de resolucio d'Hidatos (backtracking amb podes) sota diverses configuracions i topologies.
 
-Source file (in FONTS):
-  src/test/SolverTest.java
+S'hi comprova:
+- Resolucio de taulers convencionals: Des de casos trivials (1x1) fins a taulers 3x3 amb diferents densitats de claus inicials.
+- Adjacencies: Correcte funcionament tant en adjacencia de 4 costats (Square) com de 8 costats i cantonades (SquareFull).
+- Topologies no quadrades: Verificacio de la logica de moviment en graelles hexagonals i triangulars.
+- Casos limits i d'error: 
+    * Deteccio de taulers unsolvable (claus massa llunyanes per ser connectades, o sense clau inicial '1').
+    * Gestio de "illes" o celles inaccessibles bloquejades per celles buides (voids).
+    * Comprovacio que l'algorisme respecta les celles fixades i no les sobreescriu.
+- Comprovacio de solucio unica: Verificacio del correcte funcionament de countSolutions per a la validacio de l'unicitat de la solucio (requisit per a equips de 5 persones).
 
-Compilation (from project root):
-  javac -cp "lib/*" -d out $(find src -name "*.java")
-  java  -cp "out:lib/*" org.junit.runner.JUnitCore test.SolverTest
+Operativa d'execucio:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Per compilar el projecte i els tests, executeu el script compilar.bat (Windows) o compilar.sh (Linux/Mac) des del directori FONTS/.
+2. Un cop compilat, executeu el test unitari amb la comanda corresponent al vostre sistema operatiu:
+
+Per a Linux/Mac:
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SolverTest
+
+Per a Windows:
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SolverTest

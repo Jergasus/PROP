@@ -1,30 +1,39 @@
-DRIVER: DriverHidato (SolverValidatorDriver)
-============================================
-Interactive demo driver for the Solver and Validator algorithms.
+Joc de proves del DriverHidato (SolverValidatorDriver).
 
-Architecture:
-  - Presentation layer: SolverValidatorDriver.java (console I/O only, no model imports)
-  - Controller layer  : controller.DomainController (mediates all domain access)
-  - Domain layer      : model.algorithms.Solver, model.algorithms.Validator
+Objecte de la prova:
+Provar els casos d'us de Validar Hidato i Resoldre Hidato a traves del controlador de domini (CtrlDomini). Es verifica que el sistema es capac de carregar un estat, validar si te contradiccions inicials i invocar l'algorisme de resolucio per trobar la solucio completa.
 
-Flow:
-  1. Main menu: [1] Validate  [2] Solve  [0] Exit
-  2. Catalog of predefined test cases is shown (loaded from hidatos/)
-  3. User selects a case; DomainController loads it as the active board
-  4. Validate: checks partial validity and reports whether a solution exists
-     Solve   : finds and displays the solution, then validates it
+Altres elements integrats a la prova:
+S'integren i es proven indirectament totes les classes del model de domini (Board, Cell, Position i les estrategies d'adjacencia) i les classes d'algorismes (Solver i Validator).
 
-Hidato test files (hidatos/):
-  01_square_4way_3x3.txt          — Square 4-way, solvable
-  02_square_8way_3x4_pdf.txt      — Square 8-way, solvable (PDF example)
-  03_square_8way_5x5_diamond_pdf.txt — Square 8-way diamond, solvable (PDF example)
-  04_hexagon_4x3_pdf.txt          — Hexagonal, solvable (PDF example)
-  05_triangle_4x4.txt             — Triangle, solvable
-  06_square_4way_unsolvable.txt   — Square 4-way, unsolvable
-  07_square_8way_unsolvable.txt   — Square 8-way, unsolvable
-  08_triangle_unsolvable.txt      — Triangle, unsolvable
+Fitxers de dades necessaris:
+Es requereixen els fitxers CSV ubicats a la carpeta "hidatos/" (accedits de forma relativa com a ../EXE/DriverHidato/hidatos/ durant l'execucio):
+- 01_square_4way_3x3.csv
+- 02_square_8way_3x4_pdf.csv
+- 03_square_8way_5x5_diamond_pdf.csv
+- 04_hexagon_4x3_pdf.csv
+- 05_triangle_4x4.csv
+- 06_square_4way_unsolvable.csv
+- 07_square_8way_unsolvable.csv
+- 08_triangle_unsolvable.csv
 
+Valors estudiats:
+S'aplica la tecnica de prova de caixa negra, creant conjunts de dades homogenis per cobrir tota la casuistica requerida pel joc:
+1. Diferents topologies: Taulers amb celles quadrades (adjacencia de 4 i 8 costats), hexagonals i triangulars.
+2. Formes irregulars: Taulers amb forats (com el cas "diamond") per comprovar que l'algorisme respecta les celles inaccessibles.
+3. Casos amb solucio: Hidatos parcialment omplerts que desemboquen en una solucio valida.
+4. Casos sense solucio (unsolvable): Taulers amb configuracions impossibles o bloquejos evidents per verificar que l'algorisme es capa de podar l'espai de cerca, abortar correctament i retornar fals sense penjar-se.
 
-Run (from project src):
-  ./compilar.sh        (Mac/Linux)
-  compilar.bat         (Windows)
+Efectes estudiats:
+Es comprova la correcta navegacio pels menus per consola, la visualitzacio formatejada del tauler actiu abans i despres de la resolucio, i la presentacio de missatges clars de validacio ("CONSISTENT", "CONTRADICTIONS FOUND"). Tambe s'observa el temps d'execucio de l'algorisme mostrat per pantalla per garantir que les podes son eficients.
+
+Operativa:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Per compilar el projecte, executeu el script compilar.bat (Windows) o compilar.sh (Linux/Mac) des d'aquest mateix directori FONTS/.
+2. Un cop compilat, i sense canviar de directori, executeu el driver amb la seguent comanda (valida per a tots els sistemes operatius):
+   java -cp "bin" DriverHidato.SolverValidatorDriver
+
+Un cop executat, apareixera un menu per consola amb les seguents opcions:
+[1] Validate : Permet escollir un hidato del cataleg i validar si el seu estat inicial te solucio.
+[2] Solve    : Escull un hidato i n'executa l'algorisme de resolucio, mostrant el temps invertit.
+[0] Exit     : Tanca el driver interactiu.

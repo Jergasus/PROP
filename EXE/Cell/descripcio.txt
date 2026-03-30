@@ -1,0 +1,21 @@
+Joc de proves de la classe Cell (Test Unitari).
+
+Aquest test comprova el correcte funcionament de la classe Cell de forma aillada.
+S'hi verifiquen:
+- Les constructores (normal i per copia) assegurant la correcta assignacio d'atributs.
+- L'assignacio i modificacio de valors (valors normals, valors fixats com a pistes inicials i esborrats).
+- Les transicions d'estats (cella buida, cella fixada, cella considerada forat o fora de l'area).
+- El format de sortida del metode toString segons l'estat de la cella i la seva forma geometrica.
+
+No es requereixen fitxers de dades externs, ja que totes les dades es generen en temps d'execucio dins del propi codi del test.
+
+OPERATIVA D'EXECUCIO:
+Situeu-vos al directori FONTS/ del lliurament.
+1. Executeu el script compilar.sh (Linux/Mac) o compilar.bat (Windows) per generar els binaris.
+2. Sense canviar de directori, executeu el test amb la comanda corresponent al vostre sistema operatiu:
+
+Per a Linux/Mac:
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore CellTest
+
+Per a Windows:
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore CellTest

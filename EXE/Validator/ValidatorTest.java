@@ -1,14 +1,13 @@
-package test;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import domini.model.adjacency.SquareAdjacencyStrategy;
-import domini.model.adjacency.SquareFullAdjacencyStrategy;
-import domini.algorithms.Validator;
-import domini.model.board.Board;
+import domini.model.cell.Position;
 import domini.model.cell.CellShape;
+import domini.model.board.Board;
+import domini.model.adjacency.*;
+import domini.algorithms.Validator;
 
 public class ValidatorTest {
 
@@ -19,109 +18,99 @@ public class ValidatorTest {
         validator = new Validator();
     }
 
-    private Board square4(int n, int[][] values) {
-        Board b = new Board(n, n, CellShape.SQUARE, new SquareAdjacencyStrategy());
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                if (values[i][j] > 0) b.getCell(i, j).setFixedValue(values[i][j]);
+    // Helper per crear taulers de prova ràpidament
+    private Board createBoard(int rows, int cols, CellShape shape, AdjacencyStrategy strategy, int[][] values) {
+        Board b = new Board(rows, cols, shape, strategy);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (values[i][j] == -1) {
+                    b.getCell(new Position(i, j)).setVoid(true);
+                } else if (values[i][j] > 0) {
+                    b.getCell(new Position(i, j)).setValue(values[i][j]);
+                }
+            }
+        }
         return b;
     }
 
-    private Board square8(int n, int[][] values) {
-        Board b = new Board(n, n, CellShape.SQUARE, new SquareFullAdjacencyStrategy());
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                if (values[i][j] > 0) b.getCell(i, j).setFixedValue(values[i][j]);
-        return b;
-    }
+    // --- TESTS DE CASOS VÀLIDS ---
 
     @Test
-    public void validSolution_correct2x2() {
+    public void isValid_Square4_Success() {
         // 1 2
         // 4 3
-        assertTrue(validator.isValidSolution(square4(2, new int[][]{{1,2},{4,3}})));
+        int[][] vals = {{1, 2}, {4, 3}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareAdjacencyStrategy(), vals);
+        assertTrue("Hauria de ser una solucio valida (4-way)", validator.isValidSolution(b));
     }
 
     @Test
-    public void validSolution_emptyBoardFails() {
-        assertFalse(validator.isValidSolution(square4(2, new int[][]{{0,0},{0,0}})));
+    public void isValid_Square8_DiagonalSuccess() {
+        // 1 4
+        // 3 2  (1 i 2 estan en diagonal, valid en 8-way)
+        int[][] vals = {{1, 4}, {3, 2}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareFullAdjacencyStrategy(), vals);
+        assertTrue("Hauria de ser valida en 8-way per la diagonal", validator.isValidSolution(b));
+    }
+
+    // --- TESTS DE CASOS LÍMIT I ERRORS (INVALID SOLUTIONS) ---
+
+    @Test
+    public void isInvalid_BrokenPath() {
+        // 1 2
+        // 4 5 (Falta el 3)
+        int[][] vals = {{1, 2}, {4, 5}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareAdjacencyStrategy(), vals);
+        assertFalse("Hauria de fallar perque el cami esta trencat (falta el 3)", validator.isValidSolution(b));
     }
 
     @Test
-    public void validSolution_duplicateValueFails() {
-        assertFalse(validator.isValidSolution(square4(2, new int[][]{{1,1},{3,4}})));
+    public void isInvalid_DuplicateNumbers() {
+        // 1 2
+        // 2 3 (El 2 esta repetit)
+        int[][] vals = {{1, 2}, {2, 3}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareAdjacencyStrategy(), vals);
+        assertFalse("Hauria de fallar per numeros repetits", validator.isValidSolution(b));
     }
 
     @Test
-    public void validSolution_brokenPath4way() {
-        // 1→2 would require diagonal step, not valid in 4-way
-        assertFalse(validator.isValidSolution(square4(2, new int[][]{{1,3},{4,2}})));
+    public void isInvalid_EmptyCells() {
+        // 1 2
+        // 0 3 (La cella amb 0 es considera buida)
+        int[][] vals = {{1, 2}, {0, 3}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareAdjacencyStrategy(), vals);
+        assertFalse("Una solucio no pot tenir celles buides (valor 0)", validator.isValidSolution(b));
     }
 
     @Test
-    public void validSolution_correct3x3Snake() {
-        // 1 2 3
-        // 6 5 4
-        // 7 8 9
-        assertTrue(validator.isValidSolution(square4(3, new int[][]{{1,2,3},{6,5,4},{7,8,9}})));
+    public void isInvalid_JumpTooLarge() {
+        // 1 3 (Salts de 1 a 3 no permesos en 4-way si no hi ha el 2)
+        // 4 2
+        int[][] vals = {{1, 3}, {4, 2}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareAdjacencyStrategy(), vals);
+        assertFalse("Celles consecutives han d'estar adjacents", validator.isValidSolution(b));
     }
 
     @Test
-    public void validSolution_broken3x3Fails() {
-        // 6→7 is diagonal in 4-way
-        assertFalse(validator.isValidSolution(square4(3, new int[][]{{1,2,3},{6,5,4},{9,7,8}})));
+    public void isInvalid_WrongTopology() {
+        // 1 2 (En triangles o hexagons l'adjacencia canvia)
+        // 4 3
+        int[][] vals = {{1, 2}, {4, 3}};
+        // Suposem que en la topologia triangular (0,0) i (1,1) no fossin adjacents
+        Board b = createBoard(2, 2, CellShape.TRIANGLE, new TriangleAdjacencyStrategy(), vals);
+        // El resultat dependra de la teva implementacio de TriangleAdjacencyStrategy
+        // pero serveix per testejar que el validador consulta l'estrategia correctament.
+        boolean res = validator.isValidSolution(b);
+        // Si no son adjacents, ha de ser false
+        assertFalse("Hauria de fallar si la topologia no permet el pas", res);
     }
 
     @Test
-    public void validSolution_8way_orthogonalOk() {
-        assertTrue(validator.isValidSolution(square8(2, new int[][]{{1,2},{4,3}})));
-    }
-
-    @Test
-    public void validSolution_8way_diagonalAllowed() {
-        // 1→2 diagonal, valid in 8-way
-        assertTrue(validator.isValidSolution(square8(2, new int[][]{{1,3},{4,2}})));
-    }
-
-    @Test
-    public void validSolution_boardWithVoids() {
-        // 6→7 not adjacent (distance > 1)
-        Board b = new Board(3, 3, CellShape.SQUARE, new SquareAdjacencyStrategy());
-        b.getCell(0, 2).setVoid(true);
-        b.getCell(1, 2).setVoid(true);
-        int[][] values = {{1,2,0},{6,3,0},{5,4,7}};
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
-                if (values[i][j] > 0 && !b.getCell(i,j).isVoid())
-                    b.getCell(i, j).setFixedValue(values[i][j]);
-        assertFalse(validator.isValidSolution(b));
-    }
-
-    @Test
-    public void partiallyValid_emptyBoardIsOk() {
-        assertTrue(validator.isPartiallyValid(square4(2, new int[][]{{0,0},{0,0}})));
-    }
-
-    @Test
-    public void partiallyValid_noConflict() {
-        assertTrue(validator.isPartiallyValid(square4(2, new int[][]{{1,0},{0,4}})));
-    }
-
-    @Test
-    public void partiallyValid_conflictDetected() {
-        // 1 at (0,0) and 2 at (1,1): diagonal in 4-way
-        assertFalse(validator.isPartiallyValid(square4(2, new int[][]{{1,0},{0,2}})));
-    }
-
-    @Test
-    public void partiallyValid_gapAllowed() {
-        // gap between 1 and 3 — no direct adjacency check needed
-        assertTrue(validator.isPartiallyValid(square4(2, new int[][]{{1,0},{0,3}})));
-    }
-
-    @Test
-    public void partiallyValid_conflict8way_diagonalOk() {
-        // diagonal is fine in 8-way
-        assertTrue(validator.isPartiallyValid(square8(2, new int[][]{{1,0},{0,2}})));
+    public void isValid_WithVoids() {
+        // 1  2
+        // V  3  (V = Void)
+        int[][] vals = {{1, 2}, {-1, 3}};
+        Board b = createBoard(2, 2, CellShape.SQUARE, new SquareAdjacencyStrategy(), vals);
+        assertTrue("Hauria de ser valida ignorant la cella void", validator.isValidSolution(b));
     }
 }

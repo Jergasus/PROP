@@ -1,26 +1,21 @@
-TEST SUITE: Validator
-=====================
-Classes tested: model.algorithms.Validator
+Joc de proves de la classe Validator (Test Unitari).
 
-Tests included in ValidatorTest.java:
-  - validSolution_correct2x2            : 2×2 board with a correct consecutive path
-  - validSolution_emptyBoardFails       : no values placed — must be rejected
-  - validSolution_duplicateValueFails   : board with a duplicate cell value
-  - validSolution_brokenPath4way        : 4-way board where consecutive pair is not adjacent
-  - validSolution_correct3x3Snake       : snake-path 3×3 board — must be accepted
-  - validSolution_broken3x3Fails        : 3×3 board with a break in the path
-  - validSolution_8way_orthogonalOk     : orthogonal path is valid in 8-way mode
-  - validSolution_8way_diagonalAllowed  : diagonal step is valid in 8-way mode
-  - validSolution_boardWithVoids        : path jumps over void cells — must be rejected
-  - partiallyValid_emptyBoardIsOk       : no numbers yet — no constraint can be violated
-  - partiallyValid_noConflict           : single clue placed, no pair to check
-  - partiallyValid_conflictDetected     : consecutive clues placed in non-adjacent cells
-  - partiallyValid_gapAllowed           : non-consecutive clues in non-adjacent cells — ok
-  - partiallyValid_conflict8way_diagonalOk : diagonal consecutive pair is fine in 8-way
+Objecte de la prova:
+Verificar que la logica de validacio de solucions d'Hidato es correcta segons les regles del joc.
 
-Source file (in FONTS):
-  src/test/ValidatorTest.java
+S'hi comprova:
+- Validacio positiva: Taulers complets amb camins continus per a 4-way, 8-way i topologies irregulars.
+- Cami trencats: Deteccio de salts numerics on les celles no son adjacents segons l'estrategia del tauler.
+- Integritat numerica: Deteccio de numeros repetits en el tauler o falta de numeros en la sequencia (1 a N).
+- Gestio de celles: Verificacio que no hi hagi celles buides (valor 0) i que es respectin correctament les celles forat (void).
+- Coherencia topologica: Comprovacio que el validador utilitza correctament l'AdjacencyStrategy assignada al tauler.
 
-Compilation (from project root):
-  javac -cp "lib/*" -d out $(find src -name "*.java")
-  java  -cp "out:lib/*" org.junit.runner.JUnitCore test.ValidatorTest
+Operativa d'execucio:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Per compilar el projecte i els tests, executeu el script compilar.bat (Windows) o compilar.sh (Linux/Mac) des del directori FONTS/.
+2. Un cop compilat, executeu el test unitari amb la comanda corresponent al vostre sistema operatiu:
+
+Per a Linux/Mac:
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore ValidatorTest
+Per a Windows:
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore ValidatorTest
