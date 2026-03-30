@@ -1,0 +1,20 @@
+Joc de proves de la classe SquareAdjacencyStrategy (Test Unitari).
+
+Aquest test comprova la lògica matemàtica de l'estratègia d'adjacència per a taulers quadrats (4-way).
+S'hi verifiquen:
+- El mètode areAdjacent detectant correctament adjacències horitzontals i verticals i rebutjant diagonals.
+- El mètode getNeighbors per a una posició central (retorna 4 posicions).
+- El mètode getNeighbors per a un cas límit a la cantonada del tauler (retorna només les 2 posicions que cauen dins la graella).
+
+No es requereixen fitxers de dades externs.
+
+OPERATIVA D'EXECUCIÓ:
+Situeu-vos al directori FONTS/ del lliurament.
+1. Executeu el script compilar.sh (Linux/Mac) o compilar.bat (Windows).
+2. Executeu el test:
+
+Per a Linux/Mac:
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SquareAdjacencyStrategyTest
+
+Per a Windows:
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SquareAdjacencyStrategyTest
