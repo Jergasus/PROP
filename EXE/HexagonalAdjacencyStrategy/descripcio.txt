@@ -16,7 +16,7 @@ Situeu-vos al directori FONTS/ del lliurament.
 2. Sense canviar de directori, executeu el test amb la comanda corresponent al vostre sistema operatiu:
 
 Per a Linux/Mac:
-java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacency.HexagonalAdjacencyStrategyTest
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacencyStrategyTest
 
 Per a Windows:
-java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacency.HexagonalAdjacencyStrategyTest
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacencyStrategyTest

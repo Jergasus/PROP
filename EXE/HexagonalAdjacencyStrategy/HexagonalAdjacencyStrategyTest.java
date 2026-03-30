@@ -1,4 +1,3 @@
-package HexagonalAdjacency;
 
 import static org.junit.Assert.*;
 
