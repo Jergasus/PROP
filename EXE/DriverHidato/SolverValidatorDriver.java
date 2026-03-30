@@ -1,5 +1,3 @@
-package test.drivers;
-
 import domini.controller.CtrlDomini;
 import java.util.Scanner;
 

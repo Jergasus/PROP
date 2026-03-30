@@ -1,0 +1,4 @@
+Proposit: Directori que conte els algorismes principals de resolucio i validacio d'Hidatos.
+
+Solver.java - Algorisme que resol els hidatos usant backtracking. Aplica heuristiques com la de Warnsdorff per reduir el temps de cerca.
+Validator.java - Algorisme que valida l'estat del tauler. Comprova tant si una solucio completa es valida com si un estat parcial incompleix regles.

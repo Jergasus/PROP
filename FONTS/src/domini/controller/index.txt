@@ -1,0 +1,3 @@
+Proposit: Directori que conte el controlador de domini encarregat de coordinar la logica principal de l'aplicacio.
+
+CtrlDomini.java - Controlador principal que gestiona el tauler actiu. Interacciona amb Solver i Validator per processar el tauler, i utilitza StubGestorDades per carregar i instanciar els hidatos disponibles.

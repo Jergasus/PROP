@@ -1,0 +1,3 @@
+Proposit: Directori amb la classe que representa una entitat completa de puzzle d'Hidato.
+
+Hidato.java - Emmagatzema les metadades d'un puzzle (nom, tipus d'adjacencia, si te solucio, descripcio) juntament amb el seu tauler associat. Serveix com a descriptor inmutable.

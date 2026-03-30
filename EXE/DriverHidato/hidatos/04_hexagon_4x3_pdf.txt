@@ -1,9 +1,0 @@
-Hexagon sides  ·  4×3 offset grid  (PDF example)
-Hexagonal — sides only
-SOLVABLE
-Offset hexagonal grid from the official PDF. Eight playable cells; clues 1 and 8 anchor the start and end.
-H,C,4,3
-#,*,#
-?,?,?
-1,?,8
-?,?,#

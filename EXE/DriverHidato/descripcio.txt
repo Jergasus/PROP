@@ -24,9 +24,7 @@ Hidato test files (hidatos/):
   07_square_8way_unsolvable.txt   — Square 8-way, unsolvable
   08_triangle_unsolvable.txt      — Triangle, unsolvable
 
-Source file (in FONTS):
-  src/test/drivers/SolverValidatorDriver.java
 
-Run (from project root):
+Run (from project src):
   ./compilar.sh        (Mac/Linux)
   compilar.bat         (Windows)

@@ -1,0 +1,7 @@
+Proposit: Directori que implementa el patro estrategia per calcular les adjacencies entre celles segons la forma del tauler.
+
+AdjacencyStrategy.java - Interficie del patro estrategia per a la logica d'adjacencia.
+SquareAdjacencyStrategy.java - Implementacio per a celles quadrades amb adjacencia nomes pels costats (4 veins).
+SquareFullAdjacencyStrategy.java - Implementacio per a celles quadrades amb adjacencia per costats i cantonades (8 veins).
+HexagonalAdjacencyStrategy.java - Implementacio per a celles hexagonals.
+TriangleAdjacencyStrategy.java - Implementacio per a celles triangulars.

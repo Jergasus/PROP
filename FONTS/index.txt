@@ -1,0 +1,6 @@
+Proposit: Directori principal del codi font del projecte, incloent els scripts de compilacio i el codi estructurat en paquets.
+
+compilar.sh - Script per compilar el projecte des de la linia de comandes en entorns Linux/Mac.
+compilar.bat - Script per compilar el projecte des de la linia de comandes en entorns Windows.
+src/ - Subdirectori amb tot el codi font Java organitzat segons l'estructura de packages del projecte.
+lib/ - Subdirectori que conte les llibreries externes necessaries, com JUnit, per executar els tests.

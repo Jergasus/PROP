@@ -1,8 +1,0 @@
-Square 8-way  ·  3×4 L-shape  (PDF example)
-Square — sides + diagonals
-SOLVABLE
-Official PDF example. L-shaped playable area; clues 1, 7 and 9 anchor the path.
-Q,CA,3,4
-#,1,?,#
-?,?,?,?
-7,?,9,#

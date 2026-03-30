@@ -1,8 +1,0 @@
-Square 4-way  ·  Non-adjacent 1 and 2
-Square — sides only
-UNSOLVABLE
-Clues 1 and 2 are placed two rows apart with only 4-way adjacency. They cannot be neighbours, so no valid path exists.
-Q,C,3,3
-?,1,?
-?,?,?
-?,2,?

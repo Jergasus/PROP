@@ -1,0 +1,3 @@
+Proposit: Directori amb els stubs per simular la capa de dades (persistencia) en el primer lliurament.
+
+StubGestorDades.java - Simula la persistencia de dades. Proporciona una llista de fitxers disponibles i carrega el contingut dels hidatos en text pla perque el CtrlDomini pugui construir el cataleg.

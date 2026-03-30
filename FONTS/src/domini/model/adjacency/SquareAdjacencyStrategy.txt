@@ -1,8 +1,0 @@
-CLASS: SquareAdjacencyStrategy
-Package: model.adjacency
-Layer: Model
-
-Purpose:
-  Adjacency for square cells using 4-way (orthogonal) connectivity.
-  Neighbours are the cells directly above, below, left, and right.
-  areAdjacent() uses Manhattan distance == 1 (O(1), no list allocation).

@@ -66,41 +66,46 @@ public class CtrlDomini {
         return solver.solve(activeBoard);
     }
 
-    // --- MÈTODES PRIVATS PER CARREGAR I CONSTRUIR OBJECTES DEL DOMINI ---
+// --- MÈTODES PRIVATS PER CARREGAR I CONSTRUIR OBJECTES DEL DOMINI ---
 
     private List<Hidato> buildCatalog() {
         List<Hidato> list = new ArrayList<>();
         
-        // 1. Demanem a l'stub quins fitxers hi ha disponibles
-        String[] fileNames = stubDades.getLlistaHidatos();
+        // 1. Demanem a l'stub (el nostre gestor de dades) tota la informació del catàleg
+        String[][] dadesCataleg = stubDades.getDadesCataleg();
 
-        if (fileNames.length == 0) {
+        if (dadesCataleg.length == 0) {
             System.err.println("[CtrlDomini] Cap hidato trobat pel gestor de dades.");
             return list;
         }
 
-        // 2. Iterem i demanem el contingut en text pla per a cada fitxer
-        for (String fName : fileNames) {
+        // 2. Iterem sobre la informació rebuda i demanem el contingut CSV del tauler
+        for (String[] infoHidato : dadesCataleg) {
             try {
-                String[] lines = stubDades.loadHidato(fName);
-                if (lines.length >= 6) {
-                    list.add(parse(lines));
+                String fileName = infoHidato[0];
+                String[] csvLines = stubDades.loadHidato(fileName);
+                
+                // Un hidato vàlid necessita almenys capçalera + 1 fila de tauler
+                if (csvLines.length >= 2) { 
+                    list.add(parse(infoHidato, csvLines));
                 }
             } catch (Exception e) {
-                System.err.println("[CtrlDomini] No s'ha pogut carregar " + fName + ": " + e.getMessage());
+                System.err.println("[CtrlDomini] No s'ha pogut carregar " + infoHidato[0] + ": " + e.getMessage());
             }
         }
         return list;
     }
 
-    // Processa un array de Strings i el converteix en un objecte Hidato
-    private Hidato parse(String[] lines) {
-        String name     = lines[0];
-        String adjDesc  = lines[1];
-        boolean solvable = lines[2].equalsIgnoreCase("SOLVABLE");
-        String desc     = lines[3];
+    
+    // Processa la informació del catàleg i les línies pures del CSV
+    private Hidato parse(String[] infoHidato, String[] csvLines) {
+        String name      = infoHidato[1];
+        String adjDesc   = infoHidato[2];
+        boolean solvable = infoHidato[3].equalsIgnoreCase("SOLVABLE");
+        String desc      = infoHidato[4];
 
-        String[] header = lines[4].split(",");
+        // Línia 0 del CSV: <tipus_cella>,<tipus_adjacencia>,<files>,<columnes>
+        String[] header = csvLines[0].split(",");
         String typeCode = header[0].trim();
         String adjCode  = header[1].trim();
         int rows        = Integer.parseInt(header[2].trim());
@@ -127,9 +132,9 @@ public class CtrlDomini {
 
         Board board = new Board(rows, cols, shape, strategy);
 
-        // Els valors del tauler comencen a l'índex 5 de l'array 'lines'
+        // Els valors del tauler comencen a l'índex 1 de l'array 'csvLines' ara!
         for (int r = 0; r < rows; r++) {
-            String[] tokens = lines[r + 5].split(",");
+            String[] tokens = csvLines[r + 1].split(",");
             for (int c = 0; c < cols; c++) {
                 String token = tokens[c].trim();
                 switch (token) {

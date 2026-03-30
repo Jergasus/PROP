@@ -1,0 +1,3 @@
+Proposit: Directori amb les classes que defineixen l'estructura i logica espacial del tauler d'Hidato.
+
+Board.java - Representa la graella de l'Hidato. Conte una matriu de celles i delega tota la logica d'adjacencia a una estrategia especifica segons la geometria.

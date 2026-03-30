@@ -1,14 +1,21 @@
 @echo off
-REM Compile and run the Hidato Solver & Validator demo.
-REM Run from the project root:  compilar.bat
+REM Compila i executa el projecte Hidato
+REM S'ha d'executar SEMPRE des del directori FONTS
 
-if not exist out mkdir out
+if not exist ..\EXE\bin mkdir ..\EXE\bin
 
-dir /s /b FONTS\src\*.java EXE\*.java > %TEMP%\hidato_sources.txt
-javac -cp "lib\*" -d out @%TEMP%\hidato_sources.txt
+dir /s /b src\*.java > %TEMP%\hidato_sources.txt
+dir /s /b ..\EXE\*.java >> %TEMP%\hidato_sources.txt
+
+javac -cp "lib\*" -d ..\EXE\bin @%TEMP%\hidato_sources.txt
+
 if errorlevel 1 (
-    echo Compilation failed.
+    echo [ERROR] La compilacio ha fallat.
     exit /b 1
 )
 
-java -cp "out;lib\*" test.drivers.SolverValidatorDriver
+echo --------------------------------------------------
+echo Executant Driver...
+echo --------------------------------------------------
+
+java -cp "..\EXE\bin;lib\*" SolverValidatorDriver

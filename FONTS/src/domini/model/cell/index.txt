@@ -1,0 +1,5 @@
+Proposit: Directori amb les classes que representen la unitat basica del tauler d'Hidato.
+
+Cell.java - Representa una cella individual. Gestiona el seu valor, posicio, forma i els seus estats (fixa o buida).
+Position.java - Classe per representar coordenades de files i columnes.
+CellShape.java - Enumeracio de les diferents formes geometriques de les celles (quadrat, hexagon, triangle).
