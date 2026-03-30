@@ -1,19 +1,19 @@
 #!/bin/bash
 
-echo "Iniciant la compilacio del projecte Hidato..."
+echo "Iniciant la compilacio"
 
-# 1. Creem el directori on aniran els fitxers binaris (.class)
+# Creem directori per binaris (.class)
 mkdir -p bin
 
-# 2. Creem una llista temporal amb tots els fitxers .java de FONTS i EXE
+# Creem llista temporal amb .java de FONTS i EXE
 find src ../EXE -name "*.java" > sources.txt
 
-# 3. Compilem usant l'arxiu temporal i incloent les llibreries de JUnit al Classpath
+# Compilem amb arxiu temporal incloent JUnit
 if javac -d bin -cp "lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar:src:../EXE" @sources.txt; then
-    echo "Compilacio finalitzada amb exit! Els binaris son a la carpeta FONTS/bin."
+    echo "Compilacio finalitzada"
 else
-    echo "ERROR: La compilacio ha fallat. Revisa el teu codi Java."
+    echo "ERROR: La compilacio ha fallat."
 fi
 
-# 4. Esborrem l'arxiu temporal per mantenir el directori net
+# Esborrem arxiu temporal 
 rm -f sources.txt
