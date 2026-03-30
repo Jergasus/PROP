@@ -8,6 +8,7 @@ S'hi verifiquen:
 - El mètode isConnected() que comprova si el tauler és un graf connex.
 - L'algorisme de prunatge (pruneDeadEnds) per eliminar cel·les aïllades.
 - La inserció de forats aleatoris (placeRandomVoids) mantenint la connectivitat.
+- Casos límit (taulers 1x1 i accessos fora de límits de memòria).
 
 No es requereixen fitxers de dades externs.
 

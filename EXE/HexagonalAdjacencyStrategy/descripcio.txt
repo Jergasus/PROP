@@ -5,6 +5,7 @@ S'hi verifiquen:
 - El correcte càlcul de veïns per a una cel·la situada en una fila parella (aplica un patró de coordenades concret).
 - El correcte càlcul de veïns per a una cel·la situada en una fila senar (aplica un patró de coordenades desplaçat).
 - La validació correcta dels límits del tauler (casos extrems a la cantonada 0,0).
+- La comprovació directa d'adjacència (areAdjacent) entre cel·les properes i llunyanes.
 
 No es requereixen fitxers de dades externs.
 
