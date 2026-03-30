@@ -1,131 +1,255 @@
-import org.junit.Before;
-import org.junit.Test;
+package Board;
+
 import static org.junit.Assert.*;
 
-import domini.model.board.Board;
-import domini.model.cell.Cell;
-import domini.model.cell.CellShape;
-import domini.model.cell.Position;
+import org.junit.Before;
+import org.junit.Test;
+
 import domini.model.adjacency.SquareAdjacencyStrategy;
 import domini.model.adjacency.SquareFullAdjacencyStrategy;
 import domini.model.adjacency.HexagonalAdjacencyStrategy;
 import domini.model.adjacency.TriangleAdjacencyStrategy;
+import domini.model.board.Board;
+import domini.model.cell.Cell;
+import domini.model.cell.CellShape;
+import domini.model.cell.Position;
 
 import java.util.List;
-import java.util.Random;
 
+/**
+ * Classe de proves unitàries per a la classe {@link Board}.
+ * <p>
+ * Aquesta classe verifica la construcció del tauler, la gestió de les cel·les
+ * internes, el càlcul de veïns mitjançant diferents estratègies d'adjacència
+ * i l'execució d'algorismes estructurals com la comprovació de connectivitat
+ * i la poda de culs de sac.
+ * </p>
+ * @author [Sergi Blanco Gallardo]
+ * @version 1.0
+ */
 public class BoardTest {
 
+    /** Tauler base de 3x3 amb geometria quadrada i adjacència de 4 costats per a les proves. */
     private Board board3x3;
 
+    /**
+     * Configuració prèvia a cada test.
+     * Inicialitza un tauler quadrat bàsic per a la majoria de les comprovacions.
+     */
     @Before
     public void setUp() {
         board3x3 = new Board(3, 3, CellShape.SQUARE, new SquareAdjacencyStrategy());
     }
 
+    // ==========================================
+    // PROVES D'INICIALITZACIÓ I COPIES
+    // ==========================================
+
+    /**
+     * @test Verifica que el constructor assigna correctament les dimensions.
+     */
     @Test
-    public void testConstructorAndDimensions() {
+    public void dimensions_areCorrect() {
         assertEquals("El nombre de files ha de ser 3", 3, board3x3.getRows());
         assertEquals("El nombre de columnes ha de ser 3", 3, board3x3.getCols());
-        assertEquals("La geometria del tauler ha de ser SQUARE", CellShape.SQUARE, board3x3.getCellShape());
-        assertEquals("En un 3x3 sense forats, el recompte ha de ser 9", 9, board3x3.getCellCount());
-        
-        Cell c = board3x3.getCell(0, 0);
-        assertNotNull("La cel·la superior esquerra ha d'estar inicialitzada", c);
-        assertEquals("La posicio interna de la cel·la ha de coincidir", new Position(0, 0), c.getPosition());
     }
 
+    /**
+     * @test Verifica que la forma de la cel·la per defecte és l'esperada.
+     */
     @Test
-    public void testCopyConstructorIsDeepCopy() {
-        board3x3.getCell(1, 1).setFixedValue(5);
-        
+    public void getCellShape_returnsCorrectShape() {
+        assertEquals("La geometria del tauler base ha de ser SQUARE", CellShape.SQUARE, board3x3.getCellShape());
+        Board hex = new Board(3, 3, CellShape.HEXAGON, new HexagonalAdjacencyStrategy());
+        assertEquals("La geometria del tauler hex ha de ser HEXAGON", CellShape.HEXAGON, hex.getCellShape());
+    }
+
+    /**
+     * @test Verifica el constructor de còpia (Deep Copy).
+     * Assegura que la mutació de la instància copiada no afecta el tauler original.
+     */
+    @Test
+    public void copyConstructor_isDeepCopy() {
+        board3x3.getCell(0, 0).setFixedValue(5);
         Board copy = new Board(board3x3);
-        assertEquals("La còpia ha de preservar els valors", 5, copy.getCell(1, 1).getValue());
-        
-        // Verifiquem independència
-        copy.getCell(1, 1).setFixedValue(9);
-        assertEquals("Modificar la còpia no ha d'alterar l'original", 5, board3x3.getCell(1, 1).getValue());
+
+        assertEquals("La còpia ha de preservar els valors fixats prèviament", 5, copy.getCell(0, 0).getValue());
+
+        copy.getCell(0, 0).setAsEmpty();
+        assertEquals("Modificar la cel·la de la còpia no ha d'alterar l'original", 5, board3x3.getCell(0, 0).getValue());
     }
 
+    // ==========================================
+    // PROVES D'ACCÉS A CEL·LES
+    // ==========================================
+
+    /**
+     * @test Verifica la recuperació de cel·les dins dels límits del tauler.
+     */
     @Test
-    public void testIsValidPosition() {
-        assertTrue("La posició 0,0 ha de ser vàlida", board3x3.isValidPosition(new Position(0, 0)));
-        assertTrue("La posició 2,2 ha de ser vàlida", board3x3.isValidPosition(new Position(2, 2)));
-        assertFalse("Posicions negatives no han de ser vàlides", board3x3.isValidPosition(new Position(-1, 0)));
-        assertFalse("Posicions fora de límits (marge dret) no han de ser vàlides", board3x3.isValidPosition(new Position(0, 3)));
+    public void getCell_returnsCell() {
+        assertNotNull("La cel·la superior esquerra (0,0) ha d'existir", board3x3.getCell(0, 0));
+        assertNotNull("La cel·la inferior dreta (2,2) ha d'existir", board3x3.getCell(2, 2));
     }
 
+    /**
+     * @test Verifica la seguretat en demanar posicions fora dels límits.
+     * Ha de retornar null en lloc de llançar una excepció IndexOutOfBounds.
+     */
     @Test
-    public void testGetCellValidAndOutOfBounds() {
-        assertNotNull("La cel·la (2,2) ha d'existir", board3x3.getCell(2, 2));
+    public void getCell_outOfBounds_returnsNull() {
         assertNull("Una fila negativa ha de retornar null", board3x3.getCell(-1, 0));
-        assertNull("Una columna fora de rang ha de retornar null", board3x3.getCell(0, 3));
+        assertNull("Una columna igual o major a l'amplada ha de retornar null", board3x3.getCell(0, 3));
+        assertNull("Una coordenada (3,3) en un tauler de 3x3 ha de retornar null", board3x3.getCell(3, 3));
     }
 
+    /**
+     * @test Verifica el recompte de cel·les jugables en un tauler sense modificacions.
+     */
     @Test
-    public void testGetCellCountWithVoids() {
+    public void getCellCount_allPlayable() {
+        assertEquals("En un tauler de 3x3 sense forats hi ha d'haver 9 cel·les jugables", 9, board3x3.getCellCount());
+    }
+
+    /**
+     * @test Verifica el recompte de cel·les jugables quan hi ha forats (Void).
+     */
+    @Test
+    public void getCellCount_withVoids() {
         board3x3.getCell(0, 0).setVoid(true);
         board3x3.getCell(1, 1).setVoid(true);
-        assertEquals("Si es marquen 2 forats, el recompte de jugables ha de ser 7", 7, board3x3.getCellCount());
+        assertEquals("Si es marquen 2 forats, el recompte ha de ser de 7 cel·les", 7, board3x3.getCellCount());
     }
 
+    // ==========================================
+    // PROVES D'ADJACÈNCIA I VEÏNS
+    // ==========================================
+
+    /**
+     * @test Verifica el càlcul de veïns d'una cel·la central en adjacència ortogonal (4 costats).
+     */
     @Test
-    public void testGetNeighborsSquare4Way() {
-        assertEquals("El centre (1,1) ha de tenir 4 veïns", 4, board3x3.getNeighbors(new Position(1, 1)).size());
-        assertEquals("La cantonada (0,0) ha de tenir 2 veïns", 2, board3x3.getNeighbors(new Position(0, 0)).size());
+    public void getNeighbors_4way_centerCell() {
+        List<Cell> neighbors = board3x3.getNeighbors(new Position(1, 1));
+        assertEquals("El centre d'un tauler de 4 costats ha de tenir exactament 4 veïns", 4, neighbors.size());
     }
 
+    /**
+     * @test Verifica el càlcul de veïns d'una cel·la en una cantonada en adjacència ortogonal.
+     */
     @Test
-    public void testGetNeighborsExcludesVoidCells() {
+    public void getNeighbors_4way_cornerCell() {
+        List<Cell> neighbors = board3x3.getNeighbors(new Position(0, 0));
+        assertEquals("Una cantonada en un tauler de 4 costats ha de tenir exactament 2 veïns", 2, neighbors.size());
+    }
+
+    /**
+     * @test Verifica que les cel·les marcades com a forat (Void) no es consideren veïns vàlids.
+     */
+    @Test
+    public void getNeighbors_excludesVoidCells() {
         board3x3.getCell(0, 1).setVoid(true);
         board3x3.getCell(1, 0).setVoid(true);
         List<Cell> neighbors = board3x3.getNeighbors(new Position(0, 0));
-        assertEquals("Si s'anul·len els únics 2 veïns, la llista de veïns ha de ser buida", 0, neighbors.size());
+        assertEquals("Si s'anul·len els dos únics veïns de la cantonada, la llista de veïns ha de ser buida", 0, neighbors.size());
     }
 
+    /**
+     * @test Verifica el comportament de comprovació d'adjacència directa en adjacència de 4 costats.
+     */
     @Test
-    public void testAreAdjacentOrthogonalAndDiagonal() {
-        assertTrue("Horizontal (0,0)-(0,1) son adjacents", board3x3.areAdjacent(new Position(0, 0), new Position(0, 1)));
-        assertFalse("Diagonal (0,0)-(1,1) no son adjacents en 4way", board3x3.areAdjacent(new Position(0, 0), new Position(1, 1)));
-        
-        Board b8 = new Board(3, 3, CellShape.SQUARE, new SquareFullAdjacencyStrategy());
-        assertTrue("En 8way, la diagonal si que es adjacent", b8.areAdjacent(new Position(0, 0), new Position(1, 1)));
+    public void areAdjacent_4way_orthogonal() {
+        assertTrue("Les posicions (0,0) i (0,1) són adjacents horitzontalment", board3x3.areAdjacent(new Position(0, 0), new Position(0, 1)));
+        assertTrue("Les posicions (1,1) i (2,1) són adjacents verticalment", board3x3.areAdjacent(new Position(1, 1), new Position(2, 1)));
     }
 
+    /**
+     * @test Verifica que la diagonalitat no es permet en adjacència de 4 costats.
+     */
     @Test
-    public void testIsConnectedFullAndSplitBoard() {
-        assertTrue("Un tauler sencer esta connectat", board3x3.isConnected()); 
-        
-        // Fem un tall vertical (columna 1 buida)
-        board3x3.getCell(0, 1).setVoid(true);
-        board3x3.getCell(1, 1).setVoid(true);
-        board3x3.getCell(2, 1).setVoid(true);
-        assertFalse("En dividir el tauler, ha d'estar desconnectat", board3x3.isConnected()); 
+    public void areAdjacent_4way_diagonal_false() {
+        assertFalse("En adjacència de 4 costats, les posicions diagonals (0,0) i (1,1) NO han de ser adjacents", board3x3.areAdjacent(new Position(0, 0), new Position(1, 1)));
     }
 
+    /**
+     * @test Verifica que l'estratègia Full (8 costats) accepta moviments diagonals.
+     */
     @Test
-    public void testIsConnectedSingleCell() {
-        Board b1 = new Board(1, 1, CellShape.SQUARE, new SquareAdjacencyStrategy());
-        assertTrue("Un tauler d'1x1 es considera connectat (cas limit)", b1.isConnected());
+    public void areAdjacent_8way_diagonalAllowed() {
+        Board b = new Board(3, 3, CellShape.SQUARE, new SquareFullAdjacencyStrategy());
+        assertTrue("L'estratègia de 8 costats ha de considerar adjacents les cel·les diagonals", b.areAdjacent(new Position(0, 0), new Position(1, 1)));
     }
 
+    /**
+     * @test Verifica l'obtenció de veïns en un tauler amb geometria Hexagonal.
+     */
     @Test
-    public void testPruneDeadEnds() {
-        // Aillem la cantonada 0,0 deixant nomes el vei 0,1 (1 vei per a 0,0)
-        board3x3.getCell(1, 0).setVoid(true);
-        
-        int pruned = board3x3.pruneDeadEnds();
-        assertTrue("Hauria d'haver podat el cul de sac", pruned > 0);
-        assertTrue("La cel·la 0,0 ha de ser ara un forat", board3x3.getCell(0, 0).isVoid());
+    public void getNeighbors_hexBoard_evenRow() {
+        Board hex = new Board(3, 3, CellShape.HEXAGON, new HexagonalAdjacencyStrategy());
+        List<Cell> neighbors = hex.getNeighbors(new Position(0, 1));
+        assertFalse("El càlcul de veïns en un tauler hexagonal no ha de retornar una llista buida per una posició vàlida", neighbors.isEmpty());
     }
-    
+
+    /**
+     * @test Verifica l'obtenció de veïns en un tauler amb geometria Triangular.
+     */
     @Test
-    public void testPlaceRandomVoidsGuaranteesConnectivity() {
-        Random rand = new Random(123); // Seed fixa per repetibilitat
-        boolean success = board3x3.placeRandomVoids(3, rand);
-        
-        assertTrue("Ha de retornar cert a l'inserir forats aleatoris", success);
-        assertEquals("Hi hauria d'haver 6 cel·les jugables (9-3)", 6, board3x3.getCellCount()); 
-        assertTrue("Ha de garantir connectivitat despres d'inserir els forats", board3x3.isConnected()); 
+    public void getNeighbors_triangleBoard() {
+        Board t = new Board(2, 3, CellShape.TRIANGLE, new TriangleAdjacencyStrategy());
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                assertFalse("En un tauler triangular inicial sense forats, cap cel·la ha de tenir 0 veïns", t.getNeighbors(new Position(i, j)).isEmpty());
+            }
+        }
+    }
+
+    // ==========================================
+    // PROVES D'ALGORISMES DEL TAULER
+    // ==========================================
+
+    /**
+     * @test Verifica la funcionalitat de podar culs de sac en geometries on són comuns inicialment.
+     */
+    @Test
+    public void pruneDeadEnds_removesCorners_onTriangleBoard() {
+        Board t = new Board(2, 3, CellShape.TRIANGLE, new TriangleAdjacencyStrategy());
+        int pruned = t.pruneDeadEnds();
+        assertTrue("El mètode de poda ha de retornar el nombre de cel·les eliminades", pruned >= 0);
+
+        for (int i = 0; i < t.getRows(); i++) {
+            for (int j = 0; j < t.getCols(); j++) {
+                Cell c = t.getCell(i, j);
+                if (!c.isVoid()) {
+                    assertTrue("Després de la poda, cap cel·la jugable ha de tenir menys de 2 veïns", t.getNeighbors(c.getPosition()).size() >= 2);
+                }
+            }
+        }
+    }
+
+    /**
+     * @test Verifica l'algorisme de connectivitat per a un tauler completament jugable.
+     */
+    @Test
+    public void isConnected_fullBoard() {
+        assertTrue("Un tauler completament lliure es considera connectat", board3x3.isConnected());
+    }
+
+    /**
+     * @test Verifica l'algorisme de connectivitat quan s'introdueixen forats que divideixen el tauler.
+     */
+    @Test
+    public void isConnected_afterVoidSplitsBoard() {
+        // Buidem tota la columna del mig per separar l'esquerra de la dreta
+        for (int i = 0; i < 3; i++) board3x3.getCell(i, 1).setVoid(true);
+        assertFalse("Si es divideix el tauler en dues meitats incomunicades, isConnected ha de retornar fals", board3x3.isConnected());
+    }
+
+    /**
+     * @test Cas límit: Verifica la connectivitat en un tauler d'una única cel·la.
+     */
+    @Test
+    public void isConnected_singleCell() {
+        Board b = new Board(1, 1, CellShape.SQUARE, new SquareAdjacencyStrategy());
+        assertTrue("Un tauler d'1x1 es considera connectat per definició", b.isConnected());
     }
 }

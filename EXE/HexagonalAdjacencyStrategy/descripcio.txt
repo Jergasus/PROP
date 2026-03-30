@@ -2,20 +2,21 @@ Joc de proves de la classe HexagonalAdjacencyStrategy (Test Unitari).
 
 Aquest test comprova la lògica matemàtica de l'estratègia d'adjacència hexagonal (6-way).
 S'hi verifiquen:
-- El correcte càlcul de veïns per a una cel·la situada en una fila parella (aplica un patró de coordenades concret).
-- El correcte càlcul de veïns per a una cel·la situada en una fila senar (aplica un patró de coordenades desplaçat).
-- La validació correcta dels límits del tauler (casos extrems a la cantonada 0,0).
+- El correcte càlcul de veïns per a una cel·la central en fila parell (6 veïns esperats).
+- El correcte càlcul de veïns per a una cel·la central en fila senar (6 veïns esperats).
+- La validació correcta dels límits del tauler (cantonada superior esquerra: 2 veïns).
+- El filtratge de posicions fora de límits al marge esquerre en fila senar (5 veïns).
 - La comprovació directa d'adjacència (areAdjacent) entre cel·les properes i llunyanes.
 
 No es requereixen fitxers de dades externs.
 
 OPERATIVA D'EXECUCIÓ:
 Situeu-vos al directori FONTS/ del lliurament.
-1. Executeu el script compilar.sh (Linux/Mac) o compilar.bat (Windows).
-2. Executeu el test:
+1. Executeu el script compilar.sh (Linux/Mac) o compilar.bat (Windows) per generar els binaris.
+2. Sense canviar de directori, executeu el test amb la comanda corresponent al vostre sistema operatiu:
 
 Per a Linux/Mac:
-java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacencyStrategyTest
+java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacency.HexagonalAdjacencyStrategyTest
 
 Per a Windows:
-java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacencyStrategyTest
+java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacency.HexagonalAdjacencyStrategyTest
