@@ -1,0 +1,25 @@
+Joc de proves de la classe Solver (Test Unitari).
+
+Objecte de la prova:
+Validar l'algorisme de resolució d'Hidatos (backtracking amb Warnsdorff) sota diverses configuracions i topologies.
+
+S'hi comprova:
+- Resolució de taulers convencionals: des de casos trivials fins a taulers 6x6 amb diverses densitats de pistes.
+- Adjacències: funcionament correcte tant en adjacència de 4 costats (Square) com de 8 costats i cantonades (SquareFull).
+- Topologies no quadrades: verificació de la lògica de moviment en graelles hexagonals i triangulars.
+- Casos límit i d'error:
+    * Detecció de taulers insolubles.
+    * Gestió de cel·les inaccessibles (void).
+    * Comprovació que l'algorisme respecta les cel·les fixades.
+- Comprovació de solució única: verificació del correcte funcionament de countSolutions.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.SolverTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.SolverTest

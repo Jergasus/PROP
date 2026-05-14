@@ -1,0 +1,4 @@
+Jergasus,4
+hola,4
+txell,2
+patata,2

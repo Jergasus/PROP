@@ -1,0 +1,22 @@
+Proposit: Directori principal del codi font del projecte, incloent els scripts de compilacio i el codi estructurat en paquets.
+
+compilar.sh  - Script per compilar el projecte des de la linia de comandes en entorns Linux/Mac.
+compilar.bat - Script per compilar el projecte des de la linia de comandes en entorns Windows.
+src/         - Codi font Java organitzat per packages (controller, model, persistence, view).
+lib/         - Llibreries externes necessaries (JUnit 4.13.2, Hamcrest 1.3).
+data/        - Fitxers de dades del joc: nivells pregenerats, perfils d'usuari, ranking global.
+
+Com compilar (des del directori FONTS/):
+  Linux/Mac: ./compilar.sh
+  Windows:   compilar.bat
+
+Com executar l'aplicacio (des del directori FONTS/):
+  java -cp "bin:lib/*" Main
+
+Com executar tots els tests (des del directori FONTS/):
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.HidatoTestSuite
+
+Com executar un test individual (des del directori FONTS/):
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.SolverTest
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.ValidatorTest
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.GeneratorTest

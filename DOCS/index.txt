@@ -1,0 +1,10 @@
+DOCS — Documentacio del Projecte
+==================================
+Aquest directori conte la documentacio del projecte Hidato (PROP Q2 2025-2026).
+
+Contingut esperat:
+  casosUs.pdf          - Diagrama de casos d'us del sistema.
+  modelConceptual.pdf  - Model conceptual de classes del domini.
+  classesPerMembre.pdf - Assignacio de classes per membre de l'equip.
+  estructures.pdf      - Estructures de dades i algorismes utilitzats.
+  jocsDeProves.pdf     - Descripció dels jocs de proves.

@@ -1,0 +1,20 @@
+EXE — Tests Unitaris i Drivers Interactius
+============================================
+Aquest directori conte tots els tests unitaris i els drivers executables del projecte.
+Cada subdirectori inclou un fitxer descripcio.txt explicant el seu contingut.
+
+Subdirectoris:
+  Solver/      Tests JUnit per a model.algorithms.Solver
+  Validator/   Tests JUnit per a model.algorithms.Validator
+  Generator/   Tests JUnit per a model.algorithms.Generator
+  drivers/     Drivers interactius per provar el sistema
+
+Per compilar i executar, aneu al directori FONTS/ i executeu:
+  Linux/Mac:  ./compilar.sh
+  Windows:    compilar.bat
+
+Un cop compilat, des del directori FONTS/:
+  Suite completa:
+    java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.HidatoTestSuite
+  Test individual:
+    java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.SolverTest

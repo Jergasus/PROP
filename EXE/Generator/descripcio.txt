@@ -1,0 +1,22 @@
+Joc de proves de la classe Generator (Test Unitari).
+
+Objecte de la prova:
+Verificar que el generador de puzzles Hidato produeix taulers vàlids amb solució única per a les topologies i configuracions suportades.
+
+S'hi comprova:
+- Generació bàsica: el generador retorna un tauler no nul per a la configuració donada.
+- Validació del resultat: cada tauler generat és verificable pel Validator (solució completa i consistent).
+- Unicitat de solució: el Solver confirma que cada tauler generat té exactament una solució.
+- Topologies: quadrats (4-way i 8-way), hexàgons i triangles.
+- Configuració de dificultat: el paràmetre de dificultat (0.0–1.0) influeix en el nombre de pistes visibles.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.GeneratorTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.GeneratorTest

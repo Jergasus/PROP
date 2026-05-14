@@ -1,0 +1,22 @@
+Joc de proves de la classe Validator (Test Unitari).
+
+Objecte de la prova:
+Verificar que la lògica de validació de solucions d'Hidato és correcta segons les regles del joc.
+
+S'hi comprova:
+- Validació positiva: taulers complets amb camins continus per a 4-way, 8-way i topologies irregulars.
+- Camins trencats: detecció de salts numèrics on les cel·les no són adjacents.
+- Integritat numèrica: detecció de números repetits o falta de números en la seqüència (1 a N).
+- Gestió de cel·les: verificació que no hi hagi cel·les buides i que es respectin les cel·les void.
+- Coherència topològica: comprovació que el validador utilitza correctament l'AdjacencyStrategy assignada.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.ValidatorTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore test.ValidatorTest
