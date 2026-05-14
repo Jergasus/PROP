@@ -21,3 +21,7 @@ ranking.dat
 # Claude internal notes (not part of the project)
 .claude/
 src/instructions/
+CLAUDE.md
+
+# Users and ranking data
+FONTS/data/users/
