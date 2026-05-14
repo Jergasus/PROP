@@ -1,12 +1,12 @@
 package persistence.level;
 
-import model.adjacency.*;
-import model.board.Board;
-import model.cell.Cell;
-import model.cell.CellShape;
-import model.level.Difficulty;
-import model.level.Level;
-import model.level.LevelCatalog;
+import domini.model.adjacency.*;
+import domini.model.board.Board;
+import domini.model.cell.Cell;
+import domini.model.cell.CellShape;
+import domini.model.level.Difficulty;
+import domini.model.level.Level;
+import domini.model.level.LevelCatalog;
 import persistence.HidatoFileParser;
 
 import java.io.File;

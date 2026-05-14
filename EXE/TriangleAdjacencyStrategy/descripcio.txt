@@ -1,0 +1,23 @@
+Joc de proves de la classe TriangleAdjacencyStrategy (Test Unitari).
+
+Objecte de la prova:
+Verificar que l'estratègia d'adyacència triangular retorna veïns vàlids,
+dins dels límits, i que l'adjacència és simètrica.
+
+S'hi comprova:
+- Cel·les interiors: tenen veïns.
+- Tots els veïns dins dels límits del tauler.
+- Triangle cap amunt (^) i cap avall (v): màxim 3 veïns.
+- Simetria d'adjacència.
+- Cel·les llunyanes: no adjacents.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore TriangleAdjacencyStrategyTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore TriangleAdjacencyStrategyTest

@@ -1,0 +1,23 @@
+Joc de proves de la classe HexagonalAdjacencyStrategy (Test Unitari).
+
+Objecte de la prova:
+Verificar que l'estratègia d'adyacència hexagonal retorna fins a 6 veïns per
+cel·les interiors i menys per cel·les de vora, i que l'adjacència és simètrica.
+
+S'hi comprova:
+- Cel·la interior de fila parella: 6 veïns.
+- Cel·la interior de fila imparella: 6 veïns.
+- Cel·la de cantó: menys de 6 veïns.
+- Tots els veïns estan dins dels límits del tauler.
+- Simetria d'adjacència: si A és veí de B, llavors B és veí de A.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacencyStrategyTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore HexagonalAdjacencyStrategyTest

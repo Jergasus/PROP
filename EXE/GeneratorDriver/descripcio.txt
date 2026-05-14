@@ -1,0 +1,16 @@
+Driver interactiu per al Generator (Driver Manual).
+
+Objecte del driver:
+Permet provar el Generator amb paràmetres configurables per consola:
+forma, adyacència, mida, dificultat i nombre de celdas void.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el driver:
+
+Linux/Mac:
+  java -cp "bin:lib/*" GeneratorDriver.GeneratorDriver
+
+Windows:
+  java -cp "bin;lib\*" GeneratorDriver.GeneratorDriver

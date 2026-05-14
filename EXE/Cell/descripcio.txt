@@ -1,0 +1,24 @@
+Joc de proves de la classe Cell (Test Unitari).
+
+Objecte de la prova:
+Verificar el comportament de la classe Cell: estats (buit, fix, void),
+modificació de valors i constructor de copia.
+
+S'hi comprova:
+- Cel·la nova: buida, no fixa, no void.
+- setFixedValue(): marca com a fixa i assigna valor.
+- setValue(): funciona en cel·les no fixes; ignorat en fixes.
+- setAsEmpty(): reseteja a estat buit.
+- setVoid(true/false): activa i desactiva l'estat void.
+- Constructor de copia: independència entre original i copia.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore CellTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore CellTest

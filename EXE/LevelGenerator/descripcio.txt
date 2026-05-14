@@ -1,0 +1,16 @@
+Utilitat per generar fitxers de nivells (Driver Manual).
+
+Objecte del driver:
+Genera i guarda automàticament nous fitxers de nivells Hidato
+a data/levels/ en format estàndard (Easy, Medium, Hard).
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el driver:
+
+Linux/Mac:
+  java -cp "bin:lib/*" LevelGenerator.LevelGenerator
+
+Windows:
+  java -cp "bin;lib\*" LevelGenerator.LevelGenerator

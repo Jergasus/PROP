@@ -1,6 +1,6 @@
 package persistence.ranking;
 
-import model.ranking.RankingEntry;
+import domini.model.ranking.RankingEntry;
 
 import java.io.*;
 import java.nio.file.Files;

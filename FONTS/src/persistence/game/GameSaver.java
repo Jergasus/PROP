@@ -1,6 +1,6 @@
 package persistence.game;
 
-import model.game.Game;
+import domini.model.game.Game;
 import java.io.*;
 
 public class GameSaver {

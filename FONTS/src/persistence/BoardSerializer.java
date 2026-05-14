@@ -1,6 +1,6 @@
 package persistence;
 
-import model.board.Board;
+import domini.model.board.Board;
 import java.io.IOException;
 
 public interface BoardSerializer {

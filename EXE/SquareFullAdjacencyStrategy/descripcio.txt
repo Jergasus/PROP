@@ -1,0 +1,23 @@
+Joc de proves de la classe SquareFullAdjacencyStrategy (Test Unitari).
+
+Objecte de la prova:
+Verificar que l'estratègia d'adyacència completa (8-way, ortogonal + diagonal)
+per taulers quadrats retorna els veïns correctes.
+
+S'hi comprova:
+- Centre: 8 veïns (ortogonals + diagonals).
+- Cantó: 3 veïns.
+- Vora: 5 veïns.
+- Veïn diagonal inclòs.
+- areAdjacent(): diagonal → true; ortogonal → true; distànt → false.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SquareFullAdjacencyStrategyTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SquareFullAdjacencyStrategyTest

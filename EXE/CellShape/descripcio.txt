@@ -1,0 +1,16 @@
+Joc de proves de l'enum CellShape (Test Unitari).
+
+Objecte de la prova:
+Verificar que l'enum CellShape té els tres valors esperats i que es pot
+obtenir per nom.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore CellShapeTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore CellShapeTest

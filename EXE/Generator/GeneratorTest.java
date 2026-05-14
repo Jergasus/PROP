@@ -1,15 +1,14 @@
-package test;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import model.adjacency.*;
-import model.algorithms.Generator;
-import model.algorithms.Solver;
-import model.algorithms.Validator;
-import model.board.Board;
-import model.cell.CellShape;
+import domini.model.adjacency.*;
+import domini.algorithms.Generator;
+import domini.algorithms.Solver;
+import domini.algorithms.Validator;
+import domini.model.board.Board;
+import domini.model.cell.CellShape;
 
 /**
  * JUnit 4 tests for Generator.

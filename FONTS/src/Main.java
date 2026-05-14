@@ -1,18 +1,14 @@
-import controller.AuthController;
-import controller.DomainController;
-import controller.MenuController;
-import model.user.User;
-import view.ConsoleView;
+import domini.controller.CtrlPresentacion;
+
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        ConsoleView view = new ConsoleView();
-        DomainController domain = new DomainController(view);
-
-        AuthController auth = new AuthController(domain);
-        User user = auth.authenticate();
-
-        MenuController menu = new MenuController(user, domain);
-        menu.showMainMenu();
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ignored) {}
+            new CtrlPresentacion().inicializarPresentacion();
+        });
     }
 }

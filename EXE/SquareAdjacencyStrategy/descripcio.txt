@@ -1,0 +1,23 @@
+Joc de proves de la classe SquareAdjacencyStrategy (Test Unitari).
+
+Objecte de la prova:
+Verificar que l'estratègia d'adyacència ortogonal (4-way) per taulers quadrats
+retorna els veïns correctes i classifica les adjacències correctament.
+
+S'hi comprova:
+- Centre: 4 veïns ortogonals.
+- Cantó: 2 veïns.
+- Vora: 3 veïns.
+- Absència de veïns diagonals.
+- areAdjacent(): ortogonal → true; diagonal → false; mateixa cel·la → false.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el test:
+
+Linux/Mac:
+  java -cp "bin:lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SquareAdjacencyStrategyTest
+
+Windows:
+  java -cp "bin;lib\junit-4.13.2.jar;lib\hamcrest-core-1.3.jar" org.junit.runner.JUnitCore SquareAdjacencyStrategyTest

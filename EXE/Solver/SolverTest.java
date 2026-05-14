@@ -1,16 +1,15 @@
-package test;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import model.adjacency.SquareAdjacencyStrategy;
-import model.adjacency.SquareFullAdjacencyStrategy;
-import model.algorithms.Solver;
-import model.algorithms.Validator;
-import model.board.Board;
-import model.cell.CellShape;
-import model.cell.Position;
+import domini.model.adjacency.SquareAdjacencyStrategy;
+import domini.model.adjacency.SquareFullAdjacencyStrategy;
+import domini.algorithms.Solver;
+import domini.algorithms.Validator;
+import domini.model.board.Board;
+import domini.model.cell.CellShape;
+import domini.model.cell.Position;
 
 /**
  * JUnit 4 tests for Solver.

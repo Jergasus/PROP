@@ -1,0 +1,16 @@
+Driver interactiu per al Solver (Driver Manual).
+
+Objecte del driver:
+Permet provar el Solver manualment introduint taulers personalitzats
+per consola i observar si es troben solucions.
+
+Operativa d'execució:
+Totes les accions s'han de realitzar des del directori FONTS/ del lliurament.
+1. Compilar: ./compilar.sh (Linux/Mac) o compilar.bat (Windows)
+2. Executar el driver:
+
+Linux/Mac:
+  java -cp "bin:lib/*" SolverDriver.SolverDriver
+
+Windows:
+  java -cp "bin;lib\*" SolverDriver.SolverDriver

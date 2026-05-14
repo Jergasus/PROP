@@ -1,9 +1,9 @@
 package persistence;
 
-import model.adjacency.*;
-import model.board.Board;
-import model.cell.Cell;
-import model.cell.CellShape;
+import domini.model.adjacency.*;
+import domini.model.board.Board;
+import domini.model.cell.Cell;
+import domini.model.cell.CellShape;
 
 import java.io.*;
 import java.nio.file.Files;

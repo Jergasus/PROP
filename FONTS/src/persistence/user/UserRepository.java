@@ -1,7 +1,7 @@
 package persistence.user;
 
-import model.user.LevelProgress;
-import model.user.User;
+import domini.model.user.LevelProgress;
+import domini.model.user.User;
 
 import java.io.*;
 import java.nio.file.Files;

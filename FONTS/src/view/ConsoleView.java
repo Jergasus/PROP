@@ -3,12 +3,13 @@ package view;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import model.board.Board;
-import model.game.MoveInput;
-import model.level.Level;
-import model.ranking.RankingEntry;
-import model.user.LevelProgress;
-import model.user.User;
+import domini.model.board.Board;
+import domini.model.game.MoveInput;
+import domini.model.level.Level;
+import domini.model.ranking.RankingEntry;
+import domini.model.ranking.Score;
+import domini.model.user.LevelProgress;
+import domini.model.user.User;
 
 public class ConsoleView {
     private final Scanner scanner;
@@ -37,14 +38,14 @@ public class ConsoleView {
     }
 
     /** Legacy ranking for backward compat with random games. */
-    public void printRanking(java.util.List<model.ranking.Score> scores) {
+    public void printRanking(java.util.List<Score> scores) {
         System.out.println("\n=== TOP SCORES ===");
         if (scores.isEmpty()) {
             System.out.println("No hay puntuaciones registradas.");
         } else {
             System.out.println(String.format("%-15s | %-10s | %-10s | %s", "Nombre", "Tiempo", "Dificil", "Fecha"));
             System.out.println("-".repeat(60));
-            for (model.ranking.Score s : scores) {
+            for (Score s : scores) {
                 System.out.println(s);
             }
         }
